@@ -17,10 +17,15 @@ public class DefaultEdge<V extends IVertex<?>, W> implements IEdge<V, W> {
 		this.weight = weight;
 	}
 	
+	public V[] vertex() {
+		return vs.clone();
+	}
 	
 	public DefaultEdge(V s, V e) {
 		this(s, e, null);
 	}
+	
+	
 
 	@Override
 	public W getWeight() {
