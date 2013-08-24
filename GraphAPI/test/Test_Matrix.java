@@ -38,7 +38,7 @@ public class Test_Matrix {
 			fail("DuplicateVertextException should be thrown, but not");
 		} catch (DuplicateVertexException e) {}
 		
-		mx.addEdge(vertex("Suwon"), vertex("Seoul"), 23);
+		mx.addEdge("Suwon", "Seoul", 23);
 		
 		check_list(
 				new String[]{"Incheon", "Seoul", "Busan", "Suwon" }, 
@@ -47,13 +47,38 @@ public class Test_Matrix {
 	}
 	
 	
+	
+	@Test
+	public void test_weight_of_edge() {
+		initVertex(new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" });
+		
+		mx.addEdge("A", "E", new Integer(24));
+		mx.addEdge("B", "K", new Integer(11));
+		
+		
+		assertEquals (new Integer(24), mx.getEdge("A", "E").getWeight());
+		assertEquals (new Integer(11), mx.getEdge("B", "K").getWeight());
+		
+		
+		
+	}
 	static IVertex<String> vertex(String name) {
 		return new Vertex<String> ( name) ;
+	}
+	
+	void initVertex(String [] ao) {
+		for(String s : ao) {
+			mx.addVertext(s);
+		}
 	}
 	public void check_list(String [] data, IVertex<?>[] vs) {
 		assertEquals (data.length , vs.length);
 		for (int i = 0; i < vs.length; i++) {
 			assertEquals(new Vertex<String>(data[i]), vs[i]);
+		}
+		
+		for( String s : data) {
+			assertTrue ( mx.hasVertex(s));
 		}
 	}
 
