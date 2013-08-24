@@ -3,31 +3,45 @@ package graph;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import graph.model.DefaultEdge;
+import graph.model.IEdge;
 import graph.model.Vertex;
 import graph.model.IVertex;
 
-public class Matrix <D extends Comparable<D>, W > {
+public class Matrix <D, W > {
 
-	private ArrayList<IVertex<D>> vset = new ArrayList<IVertex<D>>();
+	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
+		
+	private WeakHashMap<IEdge<? extends IVertex<D>, W>, IEdge<? extends IVertex<D>, W>> 
+		cachedEdge = new WeakHashMap<IEdge<? extends IVertex<D>,W>, IEdge<? extends IVertex<D>,W>>();
 	
-	private HashSet<DefaultEdge<? extends IVertex<D>,W >> eset = 
-			new HashSet<DefaultEdge<? extends IVertex<D>,W>>();
+	final private HashSet<WeightMatrix<W>> mxSet = new HashSet<WeightMatrix<W>>();
 	
-	private int offsetX, offsetY;
-	
-
+	private int base = 2;
 	
 	public Matrix (int ox, int oy) {
-		offsetX = ox;
-		offsetY = oy;
+		
 	}
 	
-	public <V extends IVertex<D>> boolean hasVertex(V v) {
+	public <V extends IVertex<D> > boolean hasVertex(V v) {
 		return vset.contains(v);
+	}
+	
+	public boolean hasVertex(D data) {
+		Iterator<IndexVertex<D>> it = vset.iterator();
+		
+		while ( it.hasNext()) {
+			if ( it.next().getData().equals(data) ) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public <V extends IVertex<D>> void addVertext(V v){
@@ -35,7 +49,7 @@ public class Matrix <D extends Comparable<D>, W > {
 		if ( vset.contains(v) ) {
 			throw new DuplicateVertexException(v);
 		}
-		vset.add(v);
+		addVertex(v, false);
 	}
 	
 	private <V extends IVertex<D>> void addVertex(V v, boolean skipIfExist ) {
@@ -44,20 +58,23 @@ public class Matrix <D extends Comparable<D>, W > {
 				throw new DuplicateVertexException(v);
 			}
 		} else {
-			vset.add(v);
+			IndexVertex<D> iv = null ;
+			if ( ! (v instanceof IndexVertex) ){
+				iv = new IndexVertex<D>(v, vset);		
+			} else {
+				iv = (IndexVertex<D>) v;
+			}
+			
+			vset.add(iv);
 		}
 	}
 	
-//	private boolean hasVertex(D data) {
-//		return vset.contains(new Vertext<D>(data));
-//	}
-	
 	public IVertex<D> addVertext(D data) {
-		Vertex<D> v = new Vertex<D>(data);
+		IndexVertex<D> v = new IndexVertex<D>(new Vertex<D>(data), vset);
 		addVertext(v);
 		return v;
-		
 	}
+	
 	public <V extends IVertex<D>> V[] listVertice(){
 		@SuppressWarnings("unchecked")
 		V[] vertice = (V[]) Array.newInstance(IVertex.class, vset.size());
@@ -68,25 +85,147 @@ public class Matrix <D extends Comparable<D>, W > {
 	public <V extends IVertex<D>> void addEdge(V s, V e, W weight) {
 		// TODO not thread-safe
 		if ( !vset.contains(s) ) {
-			vset.add(s);
-		}
-		if ( !vset.contains(e)) {
-			vset.add(e);
+			throw new RuntimeException(" no such vertext : " + s);
 		}
 		
-		eset.add(new DefaultEdge<V, W>(s, e, weight));
+		if ( !vset.contains(e)) {
+			throw new RuntimeException(" no such vertext : " + e);
+		}
+		
+		int r = vset.indexOf(s);
+		int c = vset.indexOf(e);
+				
+		setWeight(r, c, weight);
 	}
 	
 	public void addEdge(D s, D e, W w) {
-		Vertex<D> vs = new Vertex<D>(s);
-		Vertex<D> ve = new Vertex<D>(e);
+		IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
+		IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
 		
 		addVertex(vs, true);
 		addVertex(ve, true);
 		
-		DefaultEdge<? extends IVertex<D>, W> edge = 
-				new DefaultEdge<IVertex<D>, W>(vs, ve, w); 
-		eset.add(edge);
+//		DefaultEdge<IVertex<D>, W> edge = 
+//				new DefaultEdge<IVertex<D>, W>(vs, ve, w);
+		
+		setWeight(vs.index(), ve.index(), w);
 	}
+	
+	private void setWeight(int r, int c, W weight) {
+		int ox = r - r % base;
+		int oy = c - c % base;
+		
+		WeightMatrix<W> mx = getMatrix(ox, oy);
+		mx.setValue(r, c, weight);
+		
+	}
+	
+	
+	public IEdge<IVertex<D>, W> getEdge(D s, D e) {
+		IndexVertex<D> vs = null ;
+		IndexVertex<D> ve = null ;
+		W weight = null;
+		
+		Iterator<IndexVertex<D>> it = vset.iterator();
+		
+		while ( it.hasNext()) {
+			IndexVertex<D> iv = it.next();
+			if ( iv.getData().equals(s) ) {
+				vs = iv; 
+			}
+			
+			if ( iv.getData().equals(e) ) {
+				ve = iv;
+			}
+			
+			if ( vs != null && ve != null ) {
+				break;
+			}
+		}
+		
+		weight = getWeight(vs.index(), ve.index());
+		
+		DefaultEdge<IVertex<D>, W> edge = new DefaultEdge<IVertex<D>, W>(vs, ve, weight);
+		cachedEdge.put(edge, edge);
+		
+		return edge;
+	}
+	
+	private W getWeight(int r, int c) {
+		return getMatrix(r, c).getValue(r, c);
+	}
+	
+	
+	WeightMatrix<W> getMatrix(int r, int c) {
+		Iterator<WeightMatrix<W>> it = mxSet.iterator();
+		
+		WeightMatrix<W> mx = null ;
+		
+		while ( it.hasNext()) {
+			mx = it.next();
+			if ( mx.contains(r, c)){
+				return mx;
+			}
+		}
+		
+		mx = new WeightMatrix<W>(r - r%base, c - c%base, base, 1);
+		mxSet.add(mx);
+		
+		return mx;
+		
+	}
+	
+	static class IndexVertex<D> implements IVertex<D> {
+
+		private List<? extends IVertex<D>> list ;
+		private IVertex<D> v ;
+		public IndexVertex(IVertex<D> v, List<? extends IVertex<D>> list) {
+			this.v = v;
+			this.list = list;
+		}
+		
+		int index() {
+			return list.indexOf(this);
+		}
+
+		@Override
+		public D getData() {
+			return v.getData();
+		}
+
+		@Override
+		public int hashCode() {
+			return v.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return this.v.equals(obj);
+		}
+
+		@Override
+		public String toString() {
+			return "[iv : " + v.toString() + " at " + list.indexOf(this) + "]";
+		}
+	}
+	
+//	static class IndexEdge<V extends IVertex<?>, W> implements IEdge<V, W> {
+//
+//		IEdge<V, W> edge;
+//		W weight ;
+//		
+//		IndexVertex<?> [] vs ;
+//		
+//		public IndexEdge(DefaultEdge<V, W> edge2) {
+//			this.edge = edge2;
+//			vs = (IndexVertex<?>[]) edge2.vertex();
+//		}
+//
+//		@Override
+//		public W getWeight() {
+//			return weight;
+//		}
+//		
+//	}
 	
 }
