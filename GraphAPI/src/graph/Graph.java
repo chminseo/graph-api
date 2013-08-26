@@ -10,10 +10,12 @@ import java.util.WeakHashMap;
 
 import graph.model.DefaultEdge;
 import graph.model.IEdge;
+import graph.model.EdgeException;
+import graph.model.VertexException;
 import graph.model.Vertex;
 import graph.model.IVertex;
 
-public class Graph <D, W > {
+public class Graph <D, W extends Number > {
 
 	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
 		
@@ -29,13 +31,13 @@ public class Graph <D, W > {
 		
 	}
 	
-	static <D, W> Graph<D, W> newDirectedType () {
+	static <D, W extends Number> Graph<D, W> newDirectedType () {
 		Graph<D, W> mx = new Graph<D,W>(0,0);
 		mx.gType = new DirectedGraph<D, W>(mx, mx.vset);
 		return  mx;
 	}
 	
-	static <D,W> Graph<D, W> newUndirectedType() {
+	static <D,W extends Number> Graph<D, W> newUndirectedType() {
 		Graph<D, W> mx = new Graph<D, W>(0,0);
 		mx.gType = new UndirectedGraph<D, W>(mx, mx.vset);
 		return mx;
@@ -59,7 +61,11 @@ public class Graph <D, W > {
 		return false;
 	}
 	
-	public <V extends IVertex<D>> void addVertext(V v){
+	public int getVertexSize() {
+		return vset.size();
+	}
+	
+	private <V extends IVertex<D>> void addVertext(V v){
 		// TODO not thread-safe
 		if ( vset.contains(v) ) {
 			throw new DuplicateVertexException(v);
@@ -135,6 +141,35 @@ public class Graph <D, W > {
 		return getMatrix(r, c).getValue(r, c);
 	}
 	
+	public W weight(D src, D dst) {
+		Iterator<IndexVertex<D>> it = vset.iterator();
+		
+		int is = -1, id = -1;
+		
+		while ( it.hasNext()) {
+			IndexVertex<D> v = it.next();
+			
+			if ( v.getData().equals(src)) {
+				is = v.index();
+			}
+			
+			if ( v.getData().equals(dst)) {
+				id = v.index();
+			}
+		}
+		
+		if ( is < 0 ) {
+			throw new VertexException("cannot find vertex src : " + src) ;
+		}
+		
+		if ( id < 0) {
+			throw new VertexException("cannot find vertex dst : " + dst) ;
+		}
+		
+		
+		return getWeight(is, id);
+	}
+	
 	
 	WeightMatrix<W> getMatrix(int r, int c) {
 		Iterator<WeightMatrix<W>> it = mxSet.iterator();
@@ -194,7 +229,7 @@ public class Graph <D, W > {
 		public abstract IEdge<IVertex<D>, W> getEdge(D s, D e );
 	}
 	
-	private static class UndirectedGraph<D,W> extends GraphType<D, W> {
+	private static class UndirectedGraph<D,W extends Number> extends GraphType<D, W> {
 		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D, W> mx ;
 		
@@ -250,6 +285,15 @@ public class Graph <D, W > {
 				}
 			}
 			
+			
+			if ( vs == null ) {
+				throw new VertexException("can not find vertex : " + s);
+			}
+			
+			if ( ve == null ) {
+				throw new VertexException("can not find vertex : " + e);
+			}
+			
 			int is = vs.index();
 			int ie = ve.index();
 			
@@ -261,6 +305,10 @@ public class Graph <D, W > {
 			
 			weight = mx.getWeight(vs.index(), ve.index());
 			
+			if ( weight == null ) {
+				throw new EdgeException("cannot find edge between : " + s + " and " + e);
+			}
+			
 			DefaultEdge<IVertex<D>, W> edge = new DefaultEdge<IVertex<D>, W>(vs, ve, weight);
 //			cachedEdge.put(edge, edge);
 			
@@ -269,7 +317,7 @@ public class Graph <D, W > {
 		
 	}
 	
-	private static class DirectedGraph<D, W> extends GraphType<D, W>{
+	private static class DirectedGraph<D, W extends Number> extends GraphType<D, W>{
 
 		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D, W> mx ;
@@ -315,13 +363,28 @@ public class Graph <D, W > {
 				}
 			}
 			
+			if ( vs == null ) {
+				throw new VertexException("can not find vertex s : " + s);
+			}
+			
+			if ( ve == null ) {
+				throw new VertexException("can not find vertex e : " + e);
+			}
+			
+			
 			weight = mx.getWeight(vs.index(), ve.index());
 			
-			DefaultEdge<IVertex<D>, W> edge = new DefaultEdge<IVertex<D>, W>(vs, ve, weight);
+			if ( weight == null ) {
+				throw new EdgeException("cannot find edge between : " + s + " and " + e);
+			}
+			
+			DefaultEdge<IVertex<D>, W> edge ;
+			
+			edge = new DefaultEdge<IVertex<D>, W>(vs, ve, weight);
+			
 //			cachedEdge.put(edge, edge);
 			
 			return edge;
 		}
-		
-	}	
+	}
 }

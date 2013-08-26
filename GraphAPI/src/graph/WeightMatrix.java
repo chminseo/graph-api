@@ -1,6 +1,6 @@
 package graph;
 
-class WeightMatrix<W>  {
+class WeightMatrix<W extends Number>  {
 	int ox, oy;
 	int base ;
 	int depth;
@@ -15,7 +15,7 @@ class WeightMatrix<W>  {
 		this.depth = depth;
 		
 		int size = (int) Math.pow(base, depth);
-		map = (W[][]) new Object[size][size];
+		map = (W[][]) new Number[size][size];
 	}
 	
 	public int getLength() {
@@ -28,8 +28,9 @@ class WeightMatrix<W>  {
 		this.map[R][C] = weight;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public W getValue(int r, int c) {
-		return map[r-ox][c-oy];
+		return (r == c ) ? (W) Integer.valueOf(0) : map[r-ox][c-oy];
 	}
 	
 	public boolean contains(int r, int c) {
