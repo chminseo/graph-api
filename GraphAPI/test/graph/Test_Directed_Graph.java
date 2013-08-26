@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import graph.DuplicateVertexException;
 import graph.Graph;
 import graph.Graphs;
+import graph.model.EdgeException;
 import graph.model.Vertex;
 import graph.model.IVertex;
 
@@ -28,7 +29,7 @@ public class Test_Directed_Graph {
 	@Test
 	public void test_add_vertext() {
 		
-		mx.addVertext(new Vertex<String>("Incheon"));
+		mx.addVertext("Incheon");
 		mx.addEdge("Seoul", "Busan", 233);
 		
 		check_list(
@@ -37,7 +38,7 @@ public class Test_Directed_Graph {
 		);
 		
 		try {
-			mx.addVertext(new Vertex<String>("Seoul"));
+			mx.addVertext("Seoul");
 			fail("DuplicateVertextException should be thrown, but not");
 		} catch (DuplicateVertexException e) {}
 		
@@ -58,13 +59,35 @@ public class Test_Directed_Graph {
 		mx.addEdge("A", "E", new Integer(24));
 		mx.addEdge("B", "K", new Integer(11));
 		
-		
 		assertEquals (new Integer(24), mx.getEdge("A", "E").getWeight());
 		assertEquals (new Integer(11), mx.getEdge("B", "K").getWeight());
+	}
+	
+	@Test
+	public void test_not_exsting_edge () {
+		initVertex(new String[]{"A", "B", "C", "D", "E"});
 		
+		// the weight of non-existing edge is null
+		try {
+			assertNull ( mx.weight("A", "E"));
+			mx.getEdge("A", "E");
+			fail("EdgeException expected, but not");
+		} catch (EdgeException e) {}
 		
+		mx.addEdge("A", "E", new Integer(24));
+		
+		assertEquals ( 24, mx.weight("A", "E").intValue()) ;
+		assertNotNull ( mx.getEdge("A", "E"));
 		
 	}
+	
+	@Test
+	public void weight_of_the_same_vertex_should_be_zero () {
+		initVertex(new String[]{"A", "B"});
+		
+		assertEquals (0, mx.weight("A", "A").intValue() );
+	}
+	
 	static IVertex<String> vertex(String name) {
 		return new Vertex<String> ( name) ;
 	}
@@ -74,6 +97,7 @@ public class Test_Directed_Graph {
 			mx.addVertext(s);
 		}
 	}
+	
 	public void check_list(String [] data, IVertex<?>[] vs) {
 		assertEquals (data.length , vs.length);
 		for (int i = 0; i < vs.length; i++) {
