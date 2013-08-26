@@ -1,6 +1,6 @@
 package graph;
 
-class WeightMatrix<W extends Number>  {
+class WeightMatrix<W extends Number & Comparable<W>>  {
 	int ox, oy;
 	int base ;
 	int depth;

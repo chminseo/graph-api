@@ -15,7 +15,7 @@ import graph.model.VertexException;
 import graph.model.Vertex;
 import graph.model.IVertex;
 
-public class Graph <D, W extends Number > {
+public class Graph <D, W extends Number & Comparable<W> > {
 
 	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
 		
@@ -31,13 +31,13 @@ public class Graph <D, W extends Number > {
 		
 	}
 	
-	static <D, W extends Number> Graph<D, W> newDirectedType () {
+	static <D, W extends Number&Comparable<W>> Graph<D, W> newDirectedType () {
 		Graph<D, W> mx = new Graph<D,W>(0,0);
 		mx.gType = new DirectedGraph<D, W>(mx, mx.vset);
 		return  mx;
 	}
 	
-	static <D,W extends Number> Graph<D, W> newUndirectedType() {
+	static <D,W extends Number&Comparable<W>> Graph<D, W> newUndirectedType() {
 		Graph<D, W> mx = new Graph<D, W>(0,0);
 		mx.gType = new UndirectedGraph<D, W>(mx, mx.vset);
 		return mx;
@@ -101,6 +101,17 @@ public class Graph <D, W extends Number > {
 		V[] vertice = (V[]) Array.newInstance(IVertex.class, vset.size());
 		vset.toArray(vertice);
 		return vertice;
+	}
+	
+	public D[] listVertex() {
+		IVertex<D> [] vs = listVertice();
+		@SuppressWarnings("unchecked")
+		D[] ds = (D[]) new Object[vs.length];
+		for( int i = 0 ; i < vs.length ; i++) {
+			ds[i] = vs[i].getData();
+		}
+		return ds;
+		
 	}
 	
 	public <V extends IVertex<D>> void addEdge(V s, V e, W weight) {
@@ -229,7 +240,7 @@ public class Graph <D, W extends Number > {
 		public abstract IEdge<IVertex<D>, W> getEdge(D s, D e );
 	}
 	
-	private static class UndirectedGraph<D,W extends Number> extends GraphType<D, W> {
+	private static class UndirectedGraph<D,W extends Number&Comparable<W>> extends GraphType<D, W> {
 		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D, W> mx ;
 		
@@ -317,7 +328,7 @@ public class Graph <D, W extends Number > {
 		
 	}
 	
-	private static class DirectedGraph<D, W extends Number> extends GraphType<D, W>{
+	private static class DirectedGraph<D, W extends Number&Comparable<W>> extends GraphType<D, W>{
 
 		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D, W> mx ;
