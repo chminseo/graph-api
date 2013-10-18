@@ -130,7 +130,7 @@ public class Graph <D> {
 		setWeight(r, c, weight);
 	}
 	
-	public void addEdge(D s, D e, double w) {
+	public void setEdge(D s, D e, double w) {
 		gType.addEdge(s, e, w);
 	}
 	
@@ -152,6 +152,12 @@ public class Graph <D> {
 		return getMatrix(r, c).getValue(r, c);
 	}
 	
+	/**
+	 * src 부터 dst까지 edge가 존재하면 weight값을 반환한다. 존재하지 않으면 -1을 반환한다.
+	 * @param src
+	 * @param dst
+	 * @return edge가 존재하면 1을 반환, 그렇지 않으면 -1을 반환.
+	 */
 	public double weight(D src, D dst) {
 		Iterator<IndexVertex<D>> it = vset.iterator();
 		
