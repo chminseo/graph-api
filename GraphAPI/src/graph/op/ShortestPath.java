@@ -40,6 +40,10 @@ public class ShortestPath<D> {
 		for ( int i = 0 ; i < nodes.length -2 ; i++) {
 			nextIdx = choose(distance, found);
 			found[nextIdx] = true;
+			
+			if ( nodes[nextIdx].equals(dst) ) {
+				break;
+			}
 			D chosen = nodes[nextIdx];
 			for( int w = 0 ; w < nodes.length ; w ++) {
 				if ( found[w]) {
