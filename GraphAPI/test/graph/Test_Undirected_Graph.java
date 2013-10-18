@@ -6,9 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Test_Undirected_Graph {
+public class Test_Undirected_Graph extends TestGraph {
 
-	Graph<String> graph ;
 	@Before
 	public void setUp() throws Exception {
 		graph = Graphs.newUndirectedGraph();
@@ -19,23 +18,15 @@ public class Test_Undirected_Graph {
 	}
 
 	@Test
-	public void test() {
-		String [] vertex = new String []{"A", "B", "C", "D", "E" };
-		initVertex(vertex);
+	public void symmetry_edge_in_undirectedGraph() {
 		
-		graph.addEdge("A", "D", 12);
+		initVertex(new String []{"A", "B", "C", "D", "E" });
 		
-		double weight = graph.getEdge("D", "A").getWeight();
+		graph.setEdge("A", "D", 12);
+		assertEquals (12.0, graph.getEdge("D", "A").getWeight(), 0.1);
 		
-		assertEquals (12.0, weight, 0.1);
-		
-	}
-
-	
-	void initVertex(String [] ao) {
-		for(String s : ao) {
-			graph.addVertext(s);
-		}
+		graph.setEdge("D", "A", 10);
+		assertEquals (10.0, graph.getEdge("A", "D").getWeight(), 0.1);
 	}
 	
 }
