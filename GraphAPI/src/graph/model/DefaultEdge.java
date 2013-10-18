@@ -2,15 +2,15 @@ package graph.model;
 
 import java.lang.reflect.Array;
 
-public class DefaultEdge<V extends IVertex<?>, W> implements IEdge<V, W> {
+public class DefaultEdge<V extends IVertex<?>> implements IEdge<V> {
 	
-	public W weight ;
+	public double weight ;
 	
 
 	private V [] vs ; // = new Object[2];
 	
 	@SuppressWarnings("unchecked")
-	public DefaultEdge(V start, V end, W weight) {
+	public DefaultEdge(V start, V end, double weight) {
 		vs = (V[]) Array.newInstance(start.getClass(), 2);
 		vs[0] = start;
 		vs[1] = end;
@@ -22,13 +22,13 @@ public class DefaultEdge<V extends IVertex<?>, W> implements IEdge<V, W> {
 	}
 	
 	public DefaultEdge(V s, V e) {
-		this(s, e, null);
+		this(s, e, 0.0);
 	}
 	
 	
 
 	@Override
-	public W getWeight() {
+	public double getWeight() {
 		return weight;
 	}
 }

@@ -8,10 +8,10 @@ import org.junit.Test;
 
 public class Test_Undirected_Graph {
 
-	Graph<String, Integer> graph ;
+	Graph<String> graph ;
 	@Before
 	public void setUp() throws Exception {
-		graph = Graphs.<String, Integer>newUndirectedGraph();
+		graph = Graphs.newUndirectedGraph();
 	}
 
 	@After
@@ -25,11 +25,9 @@ public class Test_Undirected_Graph {
 		
 		graph.addEdge("A", "D", 12);
 		
-		Integer weight = graph.getEdge("D", "A").getWeight();
+		double weight = graph.getEdge("D", "A").getWeight();
 		
-		assertEquals (12, weight.intValue());
-		
-		
+		assertEquals (12.0, weight, 0.1);
 		
 	}
 

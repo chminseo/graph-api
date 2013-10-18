@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class TestGraph {
 
-	Graph<String, Integer> graph ;
+	Graph<String> graph ;
 	
 	@Before
 	public void setUp() throws Exception {

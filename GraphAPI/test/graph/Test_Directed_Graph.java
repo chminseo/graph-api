@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class Test_Directed_Graph {
 
-	Graph<String, Integer> mx ;
+	Graph<String> mx ;
 	@Before
 	public void setUp() throws Exception {
 //		mx = new Graph<String, Integer>(0, 0);
@@ -56,27 +56,27 @@ public class Test_Directed_Graph {
 	public void test_weight_of_edge() {
 		initVertex(new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L" });
 		
-		mx.addEdge("A", "E", new Integer(24));
-		mx.addEdge("B", "K", new Integer(11));
+		mx.addEdge("A", "E", 24);
+		mx.addEdge("B", "K", 11);
 		
-		assertEquals (new Integer(24), mx.getEdge("A", "E").getWeight());
-		assertEquals (new Integer(11), mx.getEdge("B", "K").getWeight());
+		assertEquals (24.0, mx.getEdge("A", "E").getWeight(), 0.1);
+		assertEquals (11.0, mx.getEdge("B", "K").getWeight(), 0.1);
 	}
 	
 	@Test
 	public void test_not_exsting_edge () {
 		initVertex(new String[]{"A", "B", "C", "D", "E"});
 		
-		// the weight of non-existing edge is null
+		// the weight of non-existing edge is -1.0
 		try {
-			assertNull ( mx.weight("A", "E"));
+			assertEquals(-1.0, mx.weight("A", "E"), 0.1 );
 			mx.getEdge("A", "E");
 			fail("EdgeException expected, but not");
 		} catch (EdgeException e) {}
 		
-		mx.addEdge("A", "E", new Integer(24));
+		mx.addEdge("A", "E", 24);
 		
-		assertEquals ( 24, mx.weight("A", "E").intValue()) ;
+		assertEquals ( 24 , (int) mx.weight("A", "E")) ;
 		assertNotNull ( mx.getEdge("A", "E"));
 		
 	}
@@ -85,7 +85,7 @@ public class Test_Directed_Graph {
 	public void weight_of_the_same_vertex_should_be_zero () {
 		initVertex(new String[]{"A", "B"});
 		
-		assertEquals (0, mx.weight("A", "A").intValue() );
+		assertEquals (0, mx.weight("A", "A"), 0.1 );
 	}
 	
 	static IVertex<String> vertex(String name) {

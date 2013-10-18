@@ -1,6 +1,6 @@
 package graph.model;
 
-public interface IEdge<V extends IVertex<?>, W> {
+public interface IEdge<V extends IVertex<?>> {
 
-	public W getWeight();
+	public double getWeight();
 }

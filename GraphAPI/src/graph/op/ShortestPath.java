@@ -3,12 +3,11 @@ package graph.op;
 import graph.Graph;
 import graph.model.VertexException;
 
-public class ShortestPath<D, W extends Number&Comparable<W> > {
+public class ShortestPath<D> {
 	
-	private Graph<D, W> graph ;
+	private Graph<D> graph ;
 	
-	public ShortestPath(Graph<D,W> g ) {
-		// TODO Auto-generated constructor stub
+	public ShortestPath(Graph<D> g ) {
 		this.graph = g;
 	}
 	
@@ -24,8 +23,7 @@ public class ShortestPath<D, W extends Number&Comparable<W> > {
 		
 		D [] nodes = graph.listVertex();
 
-		@SuppressWarnings("unchecked")
-		W [] distance = (W[]) new Number[nodes.length];
+		double [] distance = (double []) new double[nodes.length];
 		boolean [] found = new boolean [nodes.length];
 		
 		for (int i = 0; i < nodes.length; i++) {
@@ -38,20 +36,9 @@ public class ShortestPath<D, W extends Number&Comparable<W> > {
 			}
 		}
 		
-		ICountable<W> ic = new ICountable<W>() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public W add(W a, W b) {
-				return (W) ((a == null || b == null ) 
-						? Double.valueOf(Double.MAX_VALUE) : 
-							Double.valueOf( a.doubleValue() + b.doubleValue()) );
-			}
-
-		};
-		
+		int nextIdx = -1;
 		for ( int i = 0 ; i < nodes.length -2 ; i++) {
-			int nextIdx = choose(distance, found);
+			nextIdx = choose(distance, found);
 			found[nextIdx] = true;
 			D chosen = nodes[nextIdx];
 			for( int w = 0 ; w < nodes.length ; w ++) {
@@ -59,32 +46,38 @@ public class ShortestPath<D, W extends Number&Comparable<W> > {
 					continue;
 				}
 				
-				W newWeight = ic.add(distance[nextIdx], graph.weight(chosen, nodes[w]));
+				double newWeight = add(distance[nextIdx], graph.weight(chosen, nodes[w]));
 				
-				if (newWeight.compareTo( ic.add(distance[w], (W)Double.valueOf(0) ) ) < 0 ) {
-					distance[w] = ic.add(distance[nextIdx], graph.weight(chosen, nodes[w]));
+				if (distance[w] < 0 || newWeight < distance[w] ) {
+					distance[w] = newWeight;
 				}
 			}
 		}
 		
-		for( W w : distance) {
+		for( double w : distance) {
 			System.out.println(w);
+		}
+	}
+	
+	private double add(double d0, double d1) {
+		if ( d0 < 0 || d1 < 0 ) {
+			return Double.MAX_VALUE;
+		} else {
+			return d0 + d1;
 		}
 	}
 
 	
-	private int choose(W[] distance, boolean[] found) {
+	private int choose( double [] distance, boolean[] found) {
 		// TEST created and not tested method stub
-		Number min = Number.class.cast(Double.MAX_VALUE);
-		int minpos ;
-		
-		minpos = -1;
+		double min = Double.MAX_VALUE ;
+		int minpos = -1;
 		
 		for( int i =0 ; i < distance.length ; i++) {
-			if ( distance[i] == null || found[i] ){
+			if ( distance[i] < 0 || found[i] ){
 				continue;
 			}
-			if ( distance[i].doubleValue() < min.doubleValue() ) {
+			if ( distance[i] < min ) {
 				min = distance[i];
 				minpos = i;
 			}

@@ -15,31 +15,31 @@ import graph.model.VertexException;
 import graph.model.Vertex;
 import graph.model.IVertex;
 
-public class Graph <D, W extends Number & Comparable<W> > {
+public class Graph <D> {
 
 	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
 		
-	private WeakHashMap<IEdge<? extends IVertex<D>, W>, IEdge<? extends IVertex<D>, W>> 
-		cachedEdge = new WeakHashMap<IEdge<? extends IVertex<D>,W>, IEdge<? extends IVertex<D>,W>>();
+	private WeakHashMap<IEdge<? extends IVertex<D>>, IEdge<? extends IVertex<D>>> 
+		cachedEdge = new WeakHashMap<IEdge<? extends IVertex<D>>, IEdge<? extends IVertex<D>>>();
 	
-	final private HashSet<WeightMatrix<W>> mxSet = new HashSet<WeightMatrix<W>>();
+	final private HashSet<DoubleMatrix> mxSet = new HashSet<DoubleMatrix>();
 	
 	private int base = 2;
 	
-	private GraphType<D, W> gType ;
+	private GraphType<D> gType ;
 	private Graph (int ox, int oy) {
 		
 	}
 	
-	static <D, W extends Number&Comparable<W>> Graph<D, W> newDirectedType () {
-		Graph<D, W> mx = new Graph<D,W>(0,0);
-		mx.gType = new DirectedGraph<D, W>(mx, mx.vset);
+	static <D> Graph<D> newDirectedType () {
+		Graph<D> mx = new Graph<D>(0,0);
+		mx.gType = new DirectedGraph<D>(mx, mx.vset);
 		return  mx;
 	}
 	
-	static <D,W extends Number&Comparable<W>> Graph<D, W> newUndirectedType() {
-		Graph<D, W> mx = new Graph<D, W>(0,0);
-		mx.gType = new UndirectedGraph<D, W>(mx, mx.vset);
+	static <D> Graph<D> newUndirectedType() {
+		Graph<D> mx = new Graph<D>(0,0);
+		mx.gType = new UndirectedGraph<D>(mx, mx.vset);
 		return mx;
 	}
 	
@@ -114,7 +114,7 @@ public class Graph <D, W extends Number & Comparable<W> > {
 		
 	}
 	
-	public <V extends IVertex<D>> void addEdge(V s, V e, W weight) {
+	public <V extends IVertex<D>> void addEdge(V s, V e, double weight) {
 		// TODO not thread-safe
 		if ( !vset.contains(s) ) {
 			throw new RuntimeException(" no such vertext : " + s);
@@ -130,29 +130,29 @@ public class Graph <D, W extends Number & Comparable<W> > {
 		setWeight(r, c, weight);
 	}
 	
-	public void addEdge(D s, D e, W w) {
+	public void addEdge(D s, D e, double w) {
 		gType.addEdge(s, e, w);
 	}
 	
-	private void setWeight(int r, int c, W weight) {
+	private void setWeight(int r, int c, double weight) {
 		int ox = r - r % base;
 		int oy = c - c % base;
 		
-		WeightMatrix<W> mx = getMatrix(ox, oy);
+		DoubleMatrix mx = getMatrix(ox, oy);
 		mx.setValue(r, c, weight);
 		
 	}
 	
 	
-	public IEdge<IVertex<D>, W> getEdge(D s, D e) {
+	public IEdge<IVertex<D>> getEdge(D s, D e) {
 		return gType.getEdge(s, e);
 	}
 	
-	private W getWeight(int r, int c) {
+	private double getWeight(int r, int c) {
 		return getMatrix(r, c).getValue(r, c);
 	}
 	
-	public W weight(D src, D dst) {
+	public double weight(D src, D dst) {
 		Iterator<IndexVertex<D>> it = vset.iterator();
 		
 		int is = -1, id = -1;
@@ -182,10 +182,10 @@ public class Graph <D, W extends Number & Comparable<W> > {
 	}
 	
 	
-	WeightMatrix<W> getMatrix(int r, int c) {
-		Iterator<WeightMatrix<W>> it = mxSet.iterator();
+	DoubleMatrix getMatrix(int r, int c) {
+		Iterator<DoubleMatrix> it = mxSet.iterator();
 		
-		WeightMatrix<W> mx = null ;
+		DoubleMatrix mx = null ;
 		
 		while ( it.hasNext()) {
 			mx = it.next();
@@ -194,7 +194,7 @@ public class Graph <D, W extends Number & Comparable<W> > {
 			}
 		}
 		
-		mx = new WeightMatrix<W>(r - r%base, c - c%base, base, 1);
+		mx = new DoubleMatrix(r - r%base, c - c%base, base, 1);
 		mxSet.add(mx);
 		
 		return mx;
@@ -235,22 +235,22 @@ public class Graph <D, W extends Number & Comparable<W> > {
 		}
 	}
 	
-	abstract static class GraphType<D, W> {
-		public abstract void addEdge(D s, D e, W weight);
-		public abstract IEdge<IVertex<D>, W> getEdge(D s, D e );
+	abstract static class GraphType<D> {
+		public abstract void addEdge(D s, D e, double weight);
+		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
 	}
 	
-	private static class UndirectedGraph<D,W extends Number&Comparable<W>> extends GraphType<D, W> {
+	private static class UndirectedGraph<D> extends GraphType<D> {
 		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D, W> mx ;
+		final Graph<D> mx ;
 		
-		public UndirectedGraph(Graph<D, W> mx, ArrayList<IndexVertex<D>> list) {
+		public UndirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
 			this.mx = mx;
 		}
 
 		@Override
-		public void addEdge(D s, D e, W weight) {
+		public void addEdge(D s, D e, double weight) {
 			// TEST created and not tested method stub
 			
 			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
@@ -273,11 +273,11 @@ public class Graph <D, W extends Number & Comparable<W> > {
 		}
 
 		@Override
-		public IEdge<IVertex<D>, W> getEdge(D s, D e) {
+		public IEdge<IVertex<D>> getEdge(D s, D e) {
 			// TEST created and not tested method stub
 			IndexVertex<D> vs = null ;
 			IndexVertex<D> ve = null ;
-			W weight = null;
+			double weight = -1;
 			
 			Iterator<IndexVertex<D>> it = vset.iterator();
 			
@@ -316,11 +316,11 @@ public class Graph <D, W extends Number & Comparable<W> > {
 			
 			weight = mx.getWeight(vs.index(), ve.index());
 			
-			if ( weight == null ) {
+			if ( weight < 0 ) {
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);
 			}
 			
-			DefaultEdge<IVertex<D>, W> edge = new DefaultEdge<IVertex<D>, W>(vs, ve, weight);
+			DefaultEdge<IVertex<D>> edge = new DefaultEdge<IVertex<D>>(vs, ve, weight);
 //			cachedEdge.put(edge, edge);
 			
 			return edge;
@@ -328,17 +328,17 @@ public class Graph <D, W extends Number & Comparable<W> > {
 		
 	}
 	
-	private static class DirectedGraph<D, W extends Number&Comparable<W>> extends GraphType<D, W>{
+	private static class DirectedGraph<D> extends GraphType<D>{
 
 		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D, W> mx ;
-		public DirectedGraph(Graph<D, W> mx, ArrayList<IndexVertex<D>> list) {
+		final Graph<D> mx ;
+		public DirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
 			this.mx = mx;
 		}
 		
 		@Override
-		public void addEdge(D s, D e, W weight) {
+		public void addEdge(D s, D e, double weight) {
 			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
 			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
 			
@@ -352,10 +352,10 @@ public class Graph <D, W extends Number & Comparable<W> > {
 		}
 
 		@Override
-		public IEdge<IVertex<D>, W> getEdge(D s, D e) {
+		public IEdge<IVertex<D>> getEdge(D s, D e) {
 			IndexVertex<D> vs = null ;
 			IndexVertex<D> ve = null ;
-			W weight = null;
+			double weight = -1.0;
 			
 			Iterator<IndexVertex<D>> it = vset.iterator();
 			
@@ -385,13 +385,13 @@ public class Graph <D, W extends Number & Comparable<W> > {
 			
 			weight = mx.getWeight(vs.index(), ve.index());
 			
-			if ( weight == null ) {
+			if ( weight < 0 ) {
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);
 			}
 			
-			DefaultEdge<IVertex<D>, W> edge ;
+			DefaultEdge<IVertex<D>> edge ;
 			
-			edge = new DefaultEdge<IVertex<D>, W>(vs, ve, weight);
+			edge = new DefaultEdge<IVertex<D>>(vs, ve, weight);
 			
 //			cachedEdge.put(edge, edge);
 			
