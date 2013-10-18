@@ -17,17 +17,17 @@ public class Test_ShortestPath extends TestGraph {
 		
 		initVertex(new String[]{"LA", "SF", "DEN", "CHI", "BOST", "NY", "MIA", "NO"});
 		
-		graph.addEdge("BOST", "CHI", 1500);
-		graph.addEdge("BOST",  "NY",  250);
-		graph.addEdge("NY",   "CHI", 1000);
-		graph.addEdge("CHI", "DEN", 1200);
-		graph.addEdge("NY", "NO",  1400);
-		graph.addEdge("NY", "MIA", 900);
-		graph.addEdge("MIA", "NO", 1000);
-		graph.addEdge("NO", "LA", 1700);
-		graph.addEdge("DEN", "LA", 1000);
-		graph.addEdge("DEN", "SF", 800);
-		graph.addEdge("SF", "LA", 300);
+		graph.setEdge("BOST", "CHI", 1500);
+		graph.setEdge("BOST",  "NY",  250);
+		graph.setEdge("NY",   "CHI", 1000);
+		graph.setEdge("CHI", "DEN", 1200);
+		graph.setEdge("NY", "NO",  1400);
+		graph.setEdge("NY", "MIA", 900);
+		graph.setEdge("MIA", "NO", 1000);
+		graph.setEdge("NO", "LA", 1700);
+		graph.setEdge("DEN", "LA", 1000);
+		graph.setEdge("DEN", "SF", 800);
+		graph.setEdge("SF", "LA", 300);
 	}
 
 	@After
