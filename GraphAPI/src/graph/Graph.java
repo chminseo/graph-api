@@ -80,10 +80,10 @@ public class Graph <D> {
 			}
 		} else {
 			IndexVertex<D> iv = null ;
-			if ( ! (v instanceof IndexVertex) ){
-				iv = new IndexVertex<D>(v, vset);		
-			} else {
+			if ( v instanceof IndexVertex ){
 				iv = (IndexVertex<D>) v;
+			} else {
+				iv = new IndexVertex<D>(v, vset);		
 			}
 			
 			vset.add(iv);
