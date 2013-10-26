@@ -7,6 +7,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * @author chminseo
+ *
+ */
 public class Test_ShortestPath extends TestGraph {
 
 	@Before
