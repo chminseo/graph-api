@@ -17,7 +17,7 @@ public class Test_Directed_Graph extends TestGraph{
 
 	@Before
 	public void setUp() throws Exception {
-		graph = Graphs.newDirectedGraph();
+		installDirectedGraph();
 	}
 
 	@After

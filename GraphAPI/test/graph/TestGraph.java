@@ -12,6 +12,15 @@ public class TestGraph {
 	
 	@Before
 	public void setUp() throws Exception {
+		;
+	}
+	
+	protected void installDirectedGraph(){
+		graph = Graphs.newDirectedGraph();
+	}
+	
+	protected void installUndirectedGraph() {
+		graph = Graphs.newUndirectedGraph();
 	}
 
 	@After

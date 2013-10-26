@@ -10,7 +10,7 @@ public class Test_Undirected_Graph extends TestGraph {
 
 	@Before
 	public void setUp() throws Exception {
-		graph = Graphs.newUndirectedGraph();
+		installUndirectedGraph();
 	}
 
 	@After
