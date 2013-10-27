@@ -1,6 +1,7 @@
 package graph;
 
 import static org.junit.Assert.*;
+import graph.model.IVertex;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,8 +36,19 @@ public class TestGraph {
 	
 	void initVertex(String [] ao) {
 		for(String s : ao) {
-			graph.addVertext(s);
+			graph.addVertex(s);
 		}
+	}
+	
+	protected static abstract class VertexAdapter<D> implements VertextListener<D> {
+		@Override
+		public void vertexAdded(IVertex<D> vertex, Graph<D> graph) {}
+
+		@Override
+		public void vertexRemoved(IVertex<D> vertex, Graph<D> graph) {}
+
+		@Override
+		public void vertexUpdated(IVertex<D> vertex, Graph<D> graph) {}
 	}
 
 }

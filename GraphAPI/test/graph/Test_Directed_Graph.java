@@ -27,7 +27,7 @@ public class Test_Directed_Graph extends TestGraph{
 	@Test
 	public void test_add_vertext() {
 		
-		graph.addVertext("Incheon");
+		graph.addVertex("Incheon");
 		graph.setEdge("Seoul", "Busan", 233);
 		
 		check_list(
@@ -36,7 +36,7 @@ public class Test_Directed_Graph extends TestGraph{
 		);
 		
 		try {
-			graph.addVertext("Seoul");
+			graph.addVertex("Seoul");
 			fail("DuplicateVertextException should be thrown, but not");
 		} catch (DuplicateVertexException e) {}
 		
