@@ -16,11 +16,15 @@ public class TestGraph {
 	}
 	
 	protected void installDirectedGraph(){
-		graph = Graphs.newDirectedGraph();
+		graph = Graphs.<String>newDirectedGraph();
 	}
 	
 	protected void installUndirectedGraph() {
-		graph = Graphs.newUndirectedGraph();
+		graph = Graphs.<String>newUndirectedGraph();
+	}
+	
+	protected void installVertexes() {
+		
 	}
 
 	@After
