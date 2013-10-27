@@ -27,6 +27,9 @@ public class Graph <D> {
 	private int base = 2;
 	
 	private GraphType<D> gType ;
+	
+	private ArrayList<VertextListener<D>> vListeners = new ArrayList<VertextListener<D>>();
+	
 	private Graph (int ox, int oy) {
 		
 	}
@@ -87,10 +90,18 @@ public class Graph <D> {
 			}
 			
 			vset.add(iv);
+			
+			notifyVertexAdded(v);
 		}
 	}
 	
-	public IVertex<D> addVertext(D data) {
+	private <V extends IVertex<D>> void notifyVertexAdded(V v) {
+		for(VertextListener<D> vl : vListeners) {
+			vl.vertexAdded(v, this);
+		}
+	}
+	
+	public IVertex<D> addVertex(D data) {
 		IndexVertex<D> v = new IndexVertex<D>(new Vertex<D>(data), vset);
 		addVertext(v);
 		return v;
@@ -205,6 +216,16 @@ public class Graph <D> {
 		
 		return mx;
 		
+	}
+	
+	public void addVertexistener(VertextListener<D> listener) {
+		if ( ! vListeners.contains(listener) ) {
+			vListeners.add(listener);
+		}
+	}
+	
+	public void removeVertexListener(VertextListener<D> listener) {
+		vListeners.remove(listener);
 	}
 	
 	static class IndexVertex<D> implements IVertex<D> {
