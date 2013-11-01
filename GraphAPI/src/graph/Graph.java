@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 import graph.model.DefaultEdge;
 import graph.model.IEdge;
 import graph.model.EdgeException;
+import graph.model.IEdge.EdgeType;
 import graph.model.VertexException;
 import graph.model.Vertex;
 import graph.model.IVertex;
@@ -141,7 +141,14 @@ public class Graph <D> {
 		setWeight(r, c, weight);
 	}
 	
+	public List<IEdge<IVertex<?>>> getEdges(D vertexData, EdgeType etype ) {
+		return gType.getEdges(vertexData, etype );	
+	}
+	
 	public void setEdge(D s, D e, double w) {
+		if ( w <= 0 ) {
+			throw new EdgeException ("negative weight value not allowed : " + w);
+		}
 		gType.addEdge(s, e, w);
 	}
 	
@@ -161,6 +168,48 @@ public class Graph <D> {
 	
 	private double getWeight(int r, int c) {
 		return getMatrix(r, c).getValue(r, c);
+	}
+	
+	private IEdge<IVertex<?>> asEdge(int from, int to, double weight ) {
+		return new DefaultEdge<IVertex<?>>(vset.get(from), vset.get(to), weight );
+	}
+	
+	private List<IEdge<IVertex<?>>> listWeights(IndexVertex<D> vs, EdgeType e) {
+		
+		Iterator<DoubleMatrix> it = mxSet.iterator();
+		
+		DoubleMatrix mx = null ;
+		
+		int r, c;
+		r = c = vs.index();
+		
+		ArrayList<IEdge<IVertex<?>>> edges = new ArrayList<IEdge<IVertex<?>>>();
+		
+		while ( it.hasNext()) {
+			mx = it.next();
+			double [] weights = null;
+			// 출발지점이 vs 인 경우
+			if ( EdgeType.OUTGOING_EDGE.isValid(e) && mx.contains(r, -1) ) {
+				weights = mx.getWeightsFrom(r);
+				for( int col = 0; col < weights.length ; col++) {
+					if ( weights[col] > 0 ) {
+						edges.add(asEdge(r, mx.oy + col, weights[col]) );
+					}
+				}
+			}
+			
+			// 도착지점이 vs 인 경우
+			if ( EdgeType.INCOMING_EDGE.isValid(e) && mx.contains(-1, c) ){
+				weights = mx.getWeightsTo(c);
+				for( int row = 0; row < weights.length ; row ++) {
+					if ( weights[row] > 0 ) {
+						edges.add(asEdge(row + mx.ox , c, weights[row]) );
+					}
+				}
+			}
+		}
+		
+		return edges;
 	}
 	
 	/**
@@ -211,7 +260,8 @@ public class Graph <D> {
 			}
 		}
 		
-		mx = new DoubleMatrix(r - r%base, c - c%base, base, 1);
+		int maxLen = getVertexSize();
+		mx = new DoubleMatrix(r - r%base, c - c%base, base, 1, maxLen, maxLen );
 		mxSet.add(mx);
 		
 		return mx;
@@ -265,6 +315,7 @@ public class Graph <D> {
 	abstract static class GraphType<D> {
 		public abstract void addEdge(D s, D e, double weight);
 		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
+		public abstract List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType);
 	}
 	
 	private static class UndirectedGraph<D> extends GraphType<D> {
@@ -298,6 +349,11 @@ public class Graph <D> {
 			mx.setWeight(vs.index(), ve.index(), weight);
 			
 		}
+		
+		public List<IEdge<IVertex<?>>> getEdges(D s, IEdge.EdgeType eType) {
+			// TEST 구현해야함 undirected graph edge 조회
+			throw new RuntimeException("undirected graph edge 조회 구현해야함.");
+		};
 
 		@Override
 		public IEdge<IVertex<D>> getEdge(D s, D e) {
@@ -376,6 +432,28 @@ public class Graph <D> {
 //					new DefaultEdge<IVertex<D>, W>(vs, ve, w);
 			
 			mx.setWeight(vs.index(), ve.index(), weight);
+		}
+		
+		@Override
+		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
+			IndexVertex<D> vs = null;
+			Iterator<IndexVertex<D>> it = vset.iterator();
+			
+			while ( it.hasNext()) {
+				IndexVertex<D> iv = it.next();
+				if ( iv.getData().equals(s) ) {
+					vs = iv;
+					break;
+				}
+			}
+			
+			if ( vs == null ) {				
+				throw new VertexException("can not find vertex s : " + s);
+			}
+			
+			return mx.listWeights(vs, eType);
+			
+			
 		}
 
 		@Override

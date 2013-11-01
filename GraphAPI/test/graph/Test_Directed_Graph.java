@@ -2,11 +2,10 @@ package graph;
 import static org.junit.Assert.*;
 
 import graph.DuplicateVertexException;
-import graph.Graph;
-import graph.Graphs;
 import graph.model.EdgeException;
 import graph.model.Vertex;
 import graph.model.IVertex;
+import graph.model.IEdge.EdgeType;
 
 import org.junit.After;
 import org.junit.Before;
@@ -62,6 +61,14 @@ public class Test_Directed_Graph extends TestGraph{
 	}
 	
 	@Test
+	public void negative_weight_not_allowed() {
+		try {
+			graph.setEdge("A", "B", -1.0);
+			fail ( "expected vertex exception, but not thrown");
+		} catch ( EdgeException ve) {}
+	}
+	
+	@Test
 	public void asymmetry_edge_in_directed_graph () {
 		initVertex(new String[]{"A", "B", "C", "D", "E"});
 		
@@ -83,11 +90,43 @@ public class Test_Directed_Graph extends TestGraph{
 		
 	}
 	
+	/**    \ to
+	 *      \   A   B   C
+	 * from  \ ----------------
+	 *     A |      10  20
+	 *     B |          30
+	 *     C |
+	 */
+	@Test
+	public void test_get_edges_from_the_vertex() {
+		initVertex(new String[]{"A", "B", "C"});
+		createEdges("A", "B", 10);
+		createEdges("A", "C", 20);
+		createEdges("B", "C", 30);
+		
+		assertEquals ( 2, graph.getEdges("A", EdgeType.ANY_EDGE).size());
+		assertEquals ( 0, graph.getEdges("A", EdgeType.INCOMING_EDGE).size());
+		
+		assertEquals ( 2, graph.getEdges("C", EdgeType.INCOMING_EDGE).size());
+		assertEquals ( 1, graph.getEdges("B", EdgeType.OUTGOING_EDGE).size());
+		assertEquals ( 1, graph.getEdges("B", EdgeType.INCOMING_EDGE).size());
+		
+	}
+	
 	@Test
 	public void weight_of_the_same_vertex_should_be_zero () {
 		initVertex(new String[]{"A", "B"});
 		
 		assertEquals (0, graph.weight("A", "A"), 0.1 );
+	}
+	
+	@Test
+	public void removal_of_vertex() {
+		// TEST vertex 제거 시 연결된 edge 들을 제거해야 함. 나중에 구현.
+		initVertex(new String[]{"A", "B", "C", "D"});
+		
+		
+		
 	}
 	
 	public void check_list(String [] data, IVertex<?>[] vs) {
