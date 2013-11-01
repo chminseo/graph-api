@@ -218,7 +218,7 @@ public class Graph <D> {
 		
 	}
 	
-	public void addVertexistener(VertextListener<D> listener) {
+	public void addVertexListener(VertextListener<D> listener) {
 		if ( ! vListeners.contains(listener) ) {
 			vListeners.add(listener);
 		}

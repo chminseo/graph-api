@@ -27,7 +27,7 @@ public class Test_VertexListener extends TestGraph {
 		
 		graph.addVertex("no listener to be called");
 		
-		graph.addVertexistener(vl);
+		graph.addVertexListener(vl);
 		graph.addVertex("listening A");
 		graph.addVertex("listening B");
 		
@@ -54,7 +54,7 @@ public class Test_VertexListener extends TestGraph {
 	public void when_vertex_removed() {
 		// TEST vertex 제거 로직 추가 후에 테스트 해야 함.
 		When_vertex_removed listener = new When_vertex_removed();
-		graph.addVertexistener(listener);
+		graph.addVertexListener(listener);
 		
 		graph.addVertex("A");
 		graph.addVertex("B");
