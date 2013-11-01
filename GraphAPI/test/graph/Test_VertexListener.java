@@ -49,5 +49,24 @@ public class Test_VertexListener extends TestGraph {
 		}
 		
 	};
+	
+	@Test
+	public void when_vertex_removed() {
+		// TEST vertex 제거 로직 추가 후에 테스트 해야 함.
+		When_vertex_removed listener = new When_vertex_removed();
+		graph.addVertexistener(listener);
+		
+		graph.addVertex("A");
+		graph.addVertex("B");
+		
+	}
+	
+	class When_vertex_removed extends VertexAdapter<String>{
+		int count = 0;
+		@Override
+		public void vertexRemoved(IVertex<String> vertex, Graph<String> graph) {
+			count ++ ;
+		}
+	}
 
 }
