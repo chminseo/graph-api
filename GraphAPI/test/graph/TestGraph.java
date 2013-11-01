@@ -40,6 +40,10 @@ public class TestGraph {
 		}
 	}
 	
+	void createEdges(String from, String to, double weight) {
+		graph.setEdge(from, to, weight);
+	}
+	
 	protected static abstract class VertexAdapter<D> implements VertextListener<D> {
 		@Override
 		public void vertexAdded(IVertex<D> vertex, Graph<D> graph) {}
