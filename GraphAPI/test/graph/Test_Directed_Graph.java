@@ -51,7 +51,7 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void test_weight_of_edge() {
-		initVertex(new String[]{"A", "B", "E", "I", "J", "K" });
+		vertice(new String[]{"A", "B", "E", "I", "J", "K" });
 		
 		graph.setEdge("A", "E", 24);
 		graph.setEdge("B", "K", 11);
@@ -70,7 +70,7 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void asymmetry_edge_in_directed_graph () {
-		initVertex(new String[]{"A", "B", "C", "D", "E"});
+		vertice(new String[]{"A", "B", "C", "D", "E"});
 		
 		try {
 			graph.getEdge("A", "E");
@@ -99,10 +99,10 @@ public class Test_Directed_Graph extends TestGraph{
 	 */
 	@Test
 	public void test_get_edges_from_the_vertex() {
-		initVertex(new String[]{"A", "B", "C"});
-		createEdges("A", "B", 10);
-		createEdges("A", "C", 20);
-		createEdges("B", "C", 30);
+		vertice(new String[]{"A", "B", "C"});
+		edge("A", "B", 10);
+		edge("A", "C", 20);
+		edge("B", "C", 30);
 		
 		assertEquals ( 2, graph.getEdges("A", EdgeType.ANY_EDGE).size());
 		assertEquals ( 0, graph.getEdges("A", EdgeType.INCOMING_EDGE).size());
@@ -115,7 +115,7 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void weight_of_the_same_vertex_should_be_zero () {
-		initVertex(new String[]{"A", "B"});
+		vertice(new String[]{"A", "B"});
 		
 		assertEquals (0, graph.weight("A", "A"), 0.1 );
 	}
@@ -123,7 +123,7 @@ public class Test_Directed_Graph extends TestGraph{
 	@Test
 	public void removal_of_vertex() {
 		// TEST vertex 제거 시 연결된 edge 들을 제거해야 함. 나중에 구현.
-		initVertex(new String[]{"A", "B", "C", "D"});
+		vertice(new String[]{"A", "B", "C", "D"});
 		
 		
 		
@@ -143,10 +143,10 @@ public class Test_Directed_Graph extends TestGraph{
 	 */
 	@Test
 	public void removal_of_edge_between_vertice() {
-		initVertex(new String[]{"A", "B", "C", "D"});
-		createEdges("A", "B", 10).createEdges("A", "C", 20);
-		createEdges("B", "C", 30).createEdges("B", "D",  6);
-		createEdges("C", "D", 12).createEdges("D", "A", 33);
+		vertice(new String[]{"A", "B", "C", "D"});
+		edge("A", "B", 10).edge("A", "C", 20);
+		edge("B", "C", 30).edge("B", "D",  6);
+		edge("C", "D", 12).edge("D", "A", 33);
 		
 		assertEquals (2, graph.getEdges("A", EdgeType.OUTGOING_EDGE).size());
 		graph.getEdge("A", "C"); // no exception here

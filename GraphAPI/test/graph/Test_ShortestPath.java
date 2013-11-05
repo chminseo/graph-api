@@ -26,7 +26,7 @@ public class Test_ShortestPath extends TestGraph {
 		
 		graph = Graphs.newDirectedGraph();
 		
-		initVertex(new String[]{"LA", "SF", "DEN", "CHI", "BOST", "NY", "MIA", "NO"});
+		vertice(new String[]{"LA", "SF", "DEN", "CHI", "BOST", "NY", "MIA", "NO"});
 		
 		graph.setEdge("BOST", "CHI", 1500);
 		graph.setEdge("BOST",  "NY",  250);

@@ -52,7 +52,7 @@ public class Test_VertexListener extends TestGraph {
 	
 	@Test
 	public void when_vertex_removed() {
-		// TEST vertex 제거 로직 추가 후에 테스트 해야 함.
+		// TEST edge 제거 로직 추가 후에 테스트 해야 함.
 		When_vertex_removed listener = new When_vertex_removed();
 		graph.addVertexListener(listener);
 		

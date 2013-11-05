@@ -33,14 +33,24 @@ public class TestGraph {
 	}
 
 	
-	
-	void initVertex(String [] ao) {
+	/**
+	 * installing vertice
+	 * @param ao
+	 */
+	void vertice(String [] ao) {
 		for(String s : ao) {
 			graph.addVertex(s);
 		}
 	}
 	
-	TestGraph createEdges(String from, String to, double weight) {
+	/**
+	 * install a edge between two vertices
+	 * @param from
+	 * @param to
+	 * @param weight
+	 * @return
+	 */
+	TestGraph edge(String from, String to, double weight) {
 		graph.setEdge(from, to, weight);
 		return this;
 	}
