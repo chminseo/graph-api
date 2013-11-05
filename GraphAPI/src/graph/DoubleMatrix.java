@@ -7,6 +7,8 @@ public class DoubleMatrix {
 	int depth;
 	int rowLen, colLen;
 	
+	final public static double INF_WEIGHT = -1.0;
+	
 	double [][] map ;
 	
 	DoubleMatrix ( int ox, int oy, int base, int depth, int maxRow, int maxCol) {
