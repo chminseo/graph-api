@@ -350,9 +350,23 @@ public class Graph <D> {
 			
 		}
 		
-		public List<IEdge<IVertex<?>>> getEdges(D s, IEdge.EdgeType eType) {
-			// TEST 구현해야함 undirected graph edge 조회
-			throw new RuntimeException("undirected graph edge 조회 구현해야함.");
+		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
+			IndexVertex<D> vs = null;
+			Iterator<IndexVertex<D>> it = vset.iterator();
+			
+			while ( it.hasNext()) {
+				IndexVertex<D> iv = it.next();
+				if ( iv.getData().equals(s) ) {
+					vs = iv;
+					break;
+				}
+			}
+			
+			if ( vs == null ) {				
+				throw new VertexException("can not find vertex s : " + s);
+			}
+			
+			return mx.listWeights(vs, EdgeType.ANY_EDGE);
 		};
 
 		@Override
