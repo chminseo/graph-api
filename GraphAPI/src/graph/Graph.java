@@ -125,6 +125,22 @@ public class Graph <D> {
 		
 	}
 	
+	// ensure the given nodes exist in the list of the vertex.
+	final private void ensureVertice(D... nodes) {
+		boolean notFound = true;
+		for( int i = 0 ; i < nodes.length ; i++ ) {
+			notFound = true;
+			for(IndexVertex<D> iv : vset ) {
+				if ( iv.getData().equals(nodes[i]) ) {
+					notFound = false;
+					break;
+				}
+			}
+			if ( notFound ) {		
+				throw new VertexException(" no such vertext : " + nodes[i]);
+			}
+		}
+	}
 	public <V extends IVertex<D>> void addEdge(V s, V e, double weight) {
 		// TODO not thread-safe
 		if ( !vset.contains(s) ) {
@@ -139,6 +155,12 @@ public class Graph <D> {
 		int c = vset.indexOf(e);
 				
 		setWeight(r, c, weight);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public IEdge<IVertex<D>> removeEdge(D s, D e ) {
+		ensureVertice(s, e);
+		return gType.removeEdge(s, e);
 	}
 	
 	public List<IEdge<IVertex<?>>> getEdges(D vertexData, EdgeType etype ) {
@@ -278,6 +300,16 @@ public class Graph <D> {
 		vListeners.remove(listener);
 	}
 	
+	IndexVertex<D> findVertex( D s) {
+		for( IndexVertex<D> iv : vset) {
+			if ( iv.getData().equals(s)) {
+				return iv;
+			}
+		}
+		
+		throw new VertexException("no such vertex : " + s);
+	}
+	
 	static class IndexVertex<D> implements IVertex<D> {
 
 		private List<? extends IVertex<D>> list ;
@@ -314,6 +346,7 @@ public class Graph <D> {
 	
 	abstract static class GraphType<D> {
 		public abstract void addEdge(D s, D e, double weight);
+		public abstract IEdge<IVertex<D>> removeEdge(D s, D e);
 		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
 		public abstract List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType);
 	}
@@ -350,6 +383,24 @@ public class Graph <D> {
 			
 		}
 		
+		public IEdge<IVertex<D>> removeEdge(D s, D e) {
+			// TEST 구현해야함.
+			IndexVertex<D> vs = mx.findVertex(s);
+			IndexVertex<D> ve = mx.findVertex(e);
+			
+			int is = vs.index();
+			int ie = ve.index();
+			
+			if ( is < ie ) {
+				IndexVertex<D> tmp = vs;
+				vs = ve;
+				ve = tmp;
+			}
+			
+			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
+			
+			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
+		}
 		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
 			IndexVertex<D> vs = null;
 			Iterator<IndexVertex<D>> it = vset.iterator();
@@ -446,6 +497,16 @@ public class Graph <D> {
 //					new DefaultEdge<IVertex<D>, W>(vs, ve, w);
 			
 			mx.setWeight(vs.index(), ve.index(), weight);
+		}
+		
+		public IEdge<IVertex<D>> removeEdge(D s, D e) {
+			// TEST 구현해야함.
+			IndexVertex<D> vs = mx.findVertex(s);
+			IndexVertex<D> ve = mx.findVertex(e);
+			
+			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
+			
+			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
 		}
 		
 		@Override

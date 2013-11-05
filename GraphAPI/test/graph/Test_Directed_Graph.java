@@ -129,6 +129,37 @@ public class Test_Directed_Graph extends TestGraph{
 		
 	}
 	
+	/**    \ to
+	 *      \   A   B   C   D
+	 * from  \ ----------------
+	 *     A |      10  20
+	 *     B |          30   6
+	 *     C |              12
+	 *     D | 33
+	 *     
+	 *     (A->B : 10) (A->C : 20)
+	 *     (B->C : 30) (B->D :  6)
+	 *     (C->D : 12) (D->A : 33)
+	 */
+	@Test
+	public void removal_of_edge_between_vertice() {
+		initVertex(new String[]{"A", "B", "C", "D"});
+		createEdges("A", "B", 10).createEdges("A", "C", 20);
+		createEdges("B", "C", 30).createEdges("B", "D",  6);
+		createEdges("C", "D", 12).createEdges("D", "A", 33);
+		
+		assertEquals (2, graph.getEdges("A", EdgeType.OUTGOING_EDGE).size());
+		graph.getEdge("A", "C"); // no exception here
+		
+		graph.removeEdge("A", "C");
+		
+		assertEquals (1, graph.getEdges("A", EdgeType.OUTGOING_EDGE).size());
+		try {
+			graph.getEdge("A", "C");
+			fail ( "exception should be thrown : " + EdgeException.class.getName());
+		} catch ( EdgeException e) {}
+	}
+	
 	public void check_list(String [] data, IVertex<?>[] vs) {
 		assertEquals (data.length , vs.length);
 		for (int i = 0; i < vs.length; i++) {

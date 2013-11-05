@@ -1,6 +1,7 @@
 package graph;
 
 import static org.junit.Assert.*;
+import graph.model.EdgeException;
 import graph.model.IEdge.EdgeType;
 
 import org.junit.After;
@@ -53,6 +54,20 @@ public class Test_Undirected_Graph extends TestGraph {
 		
 		assertEquals(2, graph.getEdges("C", EdgeType.OUTGOING_EDGE).size());
 		assertEquals(2, graph.getEdges("C", EdgeType.INCOMING_EDGE).size());
+	}
+	
+	@Test
+	public void removal_of_edge_between_vertice() {
+		initVertex(new String[]{"A", "B", "C"});
+		createEdges("A", "B", 10).createEdges("A", "C", 20).createEdges("C", "B", 30);
+		
+		graph.getEdge("A", "B");
+		graph.removeEdge("A", "B");
+		try {
+			graph.getEdge("A", "B");
+			fail ( "exception should be thrown : " + EdgeException.class.getName());
+		} catch ( EdgeException e) {}
+		
 	}
 	
 }
