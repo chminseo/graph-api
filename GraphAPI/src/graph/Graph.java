@@ -124,7 +124,9 @@ public class Graph <D> {
 			removeEdge( (D)vs[0].getData(), (D) vs[1].getData() );
 		}
 		
-		return iv;
+		vset.remove(iv);
+		
+		return iv.v;
 	}
 	
 	public <V extends IVertex<D>> V[] listVertice(){
