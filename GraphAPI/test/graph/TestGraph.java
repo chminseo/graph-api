@@ -43,6 +43,20 @@ public class TestGraph {
 		}
 	}
 	
+	public void assertEdge(String s, String e) {		
+		try {			
+			graph.getEdge(s, e);
+		} catch (Exception ec) {
+			fail("exception should not be thrown");
+		}
+	}
+	public void assertNoEdge(String s, String e){
+		try {
+			graph.getEdge(s, e);
+			fail("exception expected. but not thrown.");
+		} catch (Exception ec) {}
+	}
+
 	/**
 	 * install a edge between two vertices
 	 * @param from

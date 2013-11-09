@@ -70,24 +70,15 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void asymmetry_edge_in_directed_graph () {
-		vertice(new String[]{"A", "B", "C", "D", "E"});
-		
-		try {
-			graph.getEdge("A", "E");
-			fail("EdgeException expected, but not");
-		} catch (EdgeException e) {}
+		vertice(new String[]{"A", "B", "C", "D", "E"});		
+		assertNoEdge("A", "E");
 		
 		graph.setEdge("A", "E", 24);
 		
 		assertEquals ( 24 , (int) graph.weight("A", "E")) ;
 		assertNotNull ( graph.getEdge("A", "E"));
-		
-		try {
-			// directed graph이기 때문에 (A,E)는 존재하나 (E,A)는 존재하지 않아야함.
-			graph.getEdge("E", "A");
-			fail("EdgeException expected, but not");
-		} catch (EdgeException e) {}
-		
+		// directed graph이기 때문에 (A,E)는 존재하나 (E,A)는 존재하지 않아야함.
+		assertNoEdge("E", "A");
 	}
 	
 	/**    \ to
@@ -128,26 +119,17 @@ public class Test_Directed_Graph extends TestGraph{
 		edge("A", "B", 13).edge("A", "C", 7).edge("A", "D", 5)
 			.edge("B", "C", 11);
 		
-		graph.getEdge("A", "B");
-		graph.getEdge("A", "C");
-		graph.getEdge("A", "D");
+		assertEdge("A", "B");
+		assertEdge("A", "C");
+		assertEdge("A", "D");
 		
 		graph.removeVertex("A");
+				
+		assertNoEdge("A", "B");
+		assertNoEdge("A", "C");
+		assertNoEdge("A", "D");
 		
-		
-		try {
-			graph.getEdge("A", "B");
-			fail("exception should be thrown, but not");
-		} catch(EdgeException e) {}
-		try {
-			graph.getEdge("A", "C");
-			fail("exception should be thrown, but not");
-		} catch(EdgeException e) {}
-		try {
-			graph.getEdge("A", "D");
-			fail("exception should be thrown, but not");
-		} catch(EdgeException e) {}
-		
+		assertFalse( graph.hasVertex("A"));
 		
 	}
 	
@@ -176,10 +158,7 @@ public class Test_Directed_Graph extends TestGraph{
 		graph.removeEdge("A", "C");
 		
 		assertEquals (1, graph.getEdges("A", EdgeType.OUTGOING_EDGE).size());
-		try {
-			graph.getEdge("A", "C");
-			fail ( "exception should be thrown : " + EdgeException.class.getName());
-		} catch ( EdgeException e) {}
+		assertNoEdge("A", "C");
 	}
 	
 	public void check_list(String [] data, IVertex<?>[] vs) {
