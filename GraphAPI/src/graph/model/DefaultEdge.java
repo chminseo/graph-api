@@ -31,4 +31,13 @@ public class DefaultEdge<V extends IVertex<?>> implements IEdge<V> {
 	public double getWeight() {
 		return weight;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public V [] getVertexes() {
+		V [] cloned = (V[]) Array.newInstance( vs[0].getClass(), 2);
+		cloned[0] = vs[0];
+		cloned[1] = vs[1];
+		return (V[]) cloned;
+	}
 }

@@ -24,4 +24,6 @@ public interface IEdge<V extends IVertex<?>> {
 	}
 	
 	public double getWeight();
+	
+	public V [] getVertexes();
 }
