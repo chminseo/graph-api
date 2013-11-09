@@ -125,6 +125,28 @@ public class Test_Directed_Graph extends TestGraph{
 		// TEST vertex 제거 시 연결된 edge 들을 제거해야 함. 나중에 구현.
 		vertice(new String[]{"A", "B", "C", "D"});
 		
+		edge("A", "B", 13).edge("A", "C", 7).edge("A", "D", 5)
+			.edge("B", "C", 11);
+		
+		graph.getEdge("A", "B");
+		graph.getEdge("A", "C");
+		graph.getEdge("A", "D");
+		
+		graph.removeVertex("A");
+		
+		
+		try {
+			graph.getEdge("A", "B");
+			fail("exception should be thrown, but not");
+		} catch(EdgeException e) {}
+		try {
+			graph.getEdge("A", "C");
+			fail("exception should be thrown, but not");
+		} catch(EdgeException e) {}
+		try {
+			graph.getEdge("A", "D");
+			fail("exception should be thrown, but not");
+		} catch(EdgeException e) {}
 		
 		
 	}

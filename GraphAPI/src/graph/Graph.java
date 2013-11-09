@@ -107,6 +107,26 @@ public class Graph <D> {
 		return v;
 	}
 	
+	/**
+	 * 주어진 데이터에 해당하는 vertex를 제거함.<br/>
+	 * 연결된 edge가 있으면 같이 제거함.
+	 */
+	@SuppressWarnings("unchecked")
+	public IVertex<D> removeVertex(D data) {
+		IndexVertex<D> iv = findVertex(data);
+		if ( iv == null ) {
+			throw new VertexException("no such vertex : " + data);
+		}
+		
+		List<IEdge<IVertex<?>>> edges = getEdges(data, EdgeType.ANY_EDGE);
+		for( IEdge<IVertex<?>> e : edges ) {
+			IVertex<?> [] vs = e.getVertexes();
+			removeEdge( (D)vs[0].getData(), (D) vs[1].getData() );
+		}
+		
+		return iv;
+	}
+	
 	public <V extends IVertex<D>> V[] listVertice(){
 		@SuppressWarnings("unchecked")
 		V[] vertice = (V[]) Array.newInstance(IVertex.class, vset.size());
