@@ -109,12 +109,18 @@ public class Graph <D> {
 		}
 	}
 	
-	private <E extends IEdge<IVertex<D>>> void notifyEdgeEdded(E edge) {
+	private <E extends IEdge<IVertex<D>>> void notifyEdgeAdded(E edge) {
 		for(EdgeListener<D, IVertex<D>> e : eListeners ){
 			e.edgeCreated(edge);
 		}
 	}
 
+	private <E extends IEdge<IVertex<D>>> void notifyEdgeChanged(E edge, double oldWeight ) {
+		for(EdgeListener<D, IVertex<D>> e : eListeners ){
+			e.edgeChanged(edge, oldWeight);
+		}
+	}
+	
 	private <E extends IEdge<IVertex<D>>> void notifyEdgeRemoved(E edge) {
 		for(EdgeListener<D, IVertex<D>> e : eListeners ){
 			e.edgeRemoved(edge);
@@ -221,9 +227,15 @@ public class Graph <D> {
 		if ( w <= 0 ) {
 			throw new EdgeException ("negative weight value not allowed : " + w);
 		}
+		double currentWeight = weight(s, e);
+		
 		IEdge<IVertex<D>> newEdge = gType.setEdge(s, e, w);
 		
-		notifyEdgeEdded(newEdge);
+		if ( currentWeight >= 0) {
+			notifyEdgeChanged(newEdge, currentWeight);
+		} else {
+			notifyEdgeAdded(newEdge);
+		}
 	}
 	
 	private void setWeight(int r, int c, double weight) {

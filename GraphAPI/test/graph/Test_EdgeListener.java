@@ -33,9 +33,14 @@ public class Test_EdgeListener extends TestGraph {
 		graph.setEdge("A", "C", 33);
 		graph.setEdge("B", "C", 10);
 		
-		graph.setEdge("A", "C", 4);
-		assertEquals (3, listener.called_creation);
 		
+		graph.setEdge("A", "C", 4);
+		graph.removeEdge("B", "C");
+		graph.removeEdge("A", "C");
+		
+		assertEquals(3, listener.called_creation);
+		assertEquals(1, listener.called_changed);
+		assertEquals(2, listener.called_removal);
 		
 	}
 
@@ -46,6 +51,16 @@ public class Test_EdgeListener extends TestGraph {
 		@Override
 		public void edgeCreated(IEdge<IVertex<String>> edge) {
 			called_creation ++ ;
+		}
+		
+		@Override
+		public void edgeChanged(IEdge<IVertex<String>> edge, double oldWeight) {
+			called_changed ++ ;
+		}
+		
+		@Override
+		public void edgeRemoved(IEdge<IVertex<String>> edge) {
+			called_removal ++ ;
 		}
 	}
 }
