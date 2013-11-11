@@ -8,7 +8,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	Test_Directed_Graph.class, 
 	Test_ShortestPath.class,
-	Test_Undirected_Graph.class 
+	Test_Undirected_Graph.class,
+	Test_VertexListener.class,
+	Test_EdgeListener.class
 })
 public class AllTest_graph_package {
 

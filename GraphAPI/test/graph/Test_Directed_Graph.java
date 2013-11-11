@@ -26,11 +26,11 @@ public class Test_Directed_Graph extends TestGraph{
 	@Test
 	public void test_add_vertext() {
 		
-		graph.addVertex("Incheon");
+		vertice(new String[]{"Incheon", "Seoul", "Busan", "Suwon"});
 		graph.setEdge("Seoul", "Busan", 233);
 		
 		check_list(
-				new String[]{"Incheon", "Seoul", "Busan"},
+				new String[]{"Incheon", "Seoul", "Busan", "Suwon"},
 				graph.listVertice()
 		);
 		
