@@ -40,7 +40,7 @@ public class Test_VertexListener extends TestGraph {
 		
 	}
 	
-	class Listener_to_be_called extends VertexAdapter<String> {
+	static class Listener_to_be_called extends VertexAdapter<String> {
 		String [] received = new String[2];
 		int idx = 0;
 		@Override
@@ -51,21 +51,26 @@ public class Test_VertexListener extends TestGraph {
 	};
 	
 	@Test
-	public void when_vertex_removed() {
-		// TEST edge 제거 로직 추가 후에 테스트 해야 함.
+	public void listener_called_when_vertex_removed() {
 		When_vertex_removed listener = new When_vertex_removed();
-		graph.addVertexListener(listener);
-		
+
 		graph.addVertex("A");
 		graph.addVertex("B");
 		
+		graph.addVertexListener(listener);		
+		graph.removeVertex("B");
+		graph.removeVertexListener(listener);
+		
+		graph.removeVertex("A"); // not listening
+		
+		assertEquals ("B", listener.v.getData());
 	}
 	
-	class When_vertex_removed extends VertexAdapter<String>{
-		int count = 0;
+	static class When_vertex_removed extends VertexAdapter<String>{
+		IVertex<String> v;
 		@Override
 		public void vertexRemoved(IVertex<String> vertex, Graph<String> graph) {
-			count ++ ;
+			v = vertex;
 		}
 	}
 
