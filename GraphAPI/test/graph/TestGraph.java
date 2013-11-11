@@ -1,6 +1,7 @@
 package graph;
 
 import static org.junit.Assert.*;
+import graph.model.IEdge;
 import graph.model.IVertex;
 
 import org.junit.After;
@@ -78,6 +79,19 @@ public class TestGraph {
 
 		@Override
 		public void vertexUpdated(IVertex<D> vertex, Graph<D> graph) {}
+	}
+	
+	protected static class EdgeAdaptor<D, V extends IVertex<D>> implements EdgeListener<D, V>{
+
+		@Override
+		public void edgeCreated(IEdge<V> edge) {}
+
+		@Override
+		public void edgeRemoved(IEdge<V> edge) {}
+
+		@Override
+		public void edgeChanged(IEdge<V> edge, double oldWeight) {}
+		
 	}
 
 }

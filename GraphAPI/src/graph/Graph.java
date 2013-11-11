@@ -29,6 +29,7 @@ public class Graph <D> {
 	private GraphType<D> gType ;
 	
 	private ArrayList<VertextListener<D>> vListeners = new ArrayList<VertextListener<D>>();
+	private ArrayList<EdgeListener<D, IVertex<D>>> eListeners = new ArrayList<EdgeListener<D,IVertex<D>>>();
 	
 	private Graph (int ox, int oy) {
 		
@@ -101,6 +102,25 @@ public class Graph <D> {
 		}
 	}
 	
+	private <V extends IVertex<D>> void notifyVertexRemoved(V v) {
+		
+		for(VertextListener<D> vl : vListeners) {
+			vl.vertexRemoved(v, this);
+		}
+	}
+	
+	private <E extends IEdge<IVertex<D>>> void notifyEdgeEdded(E edge) {
+		for(EdgeListener<D, IVertex<D>> e : eListeners ){
+			e.edgeCreated(edge);
+		}
+	}
+
+	private <E extends IEdge<IVertex<D>>> void notifyEdgeRemoved(E edge) {
+		for(EdgeListener<D, IVertex<D>> e : eListeners ){
+			e.edgeRemoved(edge);
+		}
+	}
+	
 	public IVertex<D> addVertex(D data) {
 		IndexVertex<D> v = new IndexVertex<D>(new Vertex<D>(data), vset);
 		addVertext(v);
@@ -126,6 +146,7 @@ public class Graph <D> {
 		
 		vset.remove(iv);
 		
+		notifyVertexRemoved(iv);
 		return iv.v;
 	}
 	
@@ -163,26 +184,33 @@ public class Graph <D> {
 			}
 		}
 	}
-	public <V extends IVertex<D>> void addEdge(V s, V e, double weight) {
-		// TODO not thread-safe
-		if ( !vset.contains(s) ) {
-			throw new RuntimeException(" no such vertext : " + s);
-		}
-		
-		if ( !vset.contains(e)) {
-			throw new RuntimeException(" no such vertext : " + e);
-		}
-		
-		int r = vset.indexOf(s);
-		int c = vset.indexOf(e);
-				
-		setWeight(r, c, weight);
-	}
+	/*
+	 * 불필요할 수 있어서 가려놓음.
+	 */
+//	public <V extends IVertex<D>> void addEdge(V s, V e, double weight) {
+//		// TODO not thread-safe
+//		if ( !vset.contains(s) ) {
+//			throw new RuntimeException(" no such vertext : " + s);
+//		}
+//		
+//		if ( !vset.contains(e)) {
+//			throw new RuntimeException(" no such vertext : " + e);
+//		}
+//		
+//		int r = vset.indexOf(s);
+//		int c = vset.indexOf(e);
+//				
+//		setWeight(r, c, weight);
+//	}
 	
 	@SuppressWarnings("unchecked")
 	public IEdge<IVertex<D>> removeEdge(D s, D e ) {
 		ensureVertice(s, e);
-		return gType.removeEdge(s, e);
+		IEdge<IVertex<D>> edge = gType.removeEdge(s, e);
+		
+		notifyEdgeRemoved(edge);
+		
+		return edge;
 	}
 	
 	public List<IEdge<IVertex<?>>> getEdges(D vertexData, EdgeType etype ) {
@@ -193,7 +221,9 @@ public class Graph <D> {
 		if ( w <= 0 ) {
 			throw new EdgeException ("negative weight value not allowed : " + w);
 		}
-		gType.addEdge(s, e, w);
+		IEdge<IVertex<D>> newEdge = gType.addEdge(s, e, w);
+		
+		notifyEdgeEdded(newEdge);
 	}
 	
 	private void setWeight(int r, int c, double weight) {
@@ -322,6 +352,17 @@ public class Graph <D> {
 		vListeners.remove(listener);
 	}
 	
+	public void addEdgeListener(EdgeListener<D, IVertex<D>> listener) {
+		if ( !eListeners.contains(listener)) {
+			eListeners.add(listener);
+		}
+	}
+	
+	public void removeEdgeListener(VertextListener<D> listener) {
+		vListeners.remove(listener);
+	}
+	
+	
 	IndexVertex<D> findVertex( D s) {
 		for( IndexVertex<D> iv : vset) {
 			if ( iv.getData().equals(s)) {
@@ -367,7 +408,7 @@ public class Graph <D> {
 	}
 	
 	abstract static class GraphType<D> {
-		public abstract void addEdge(D s, D e, double weight);
+		public abstract IEdge<IVertex<D>> addEdge(D s, D e, double weight);
 		public abstract IEdge<IVertex<D>> removeEdge(D s, D e);
 		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
 		public abstract List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType);
@@ -383,11 +424,10 @@ public class Graph <D> {
 		}
 
 		@Override
-		public void addEdge(D s, D e, double weight) {
-			// TEST created and not tested method stub
+		public IEdge<IVertex<D>> addEdge(D s, D e, double weight) {
 			
-			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
-			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
+			IndexVertex<D> vs = mx.findVertex(s);
+			IndexVertex<D> ve = mx.findVertex(e);
 			
 			mx.addVertex(vs, true);
 			mx.addVertex(ve, true);
@@ -402,6 +442,7 @@ public class Graph <D> {
 			}
 			
 			mx.setWeight(vs.index(), ve.index(), weight);
+			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
 			
 		}
 		
@@ -508,7 +549,7 @@ public class Graph <D> {
 		}
 		
 		@Override
-		public void addEdge(D s, D e, double weight) {
+		public IEdge<IVertex<D>> addEdge(D s, D e, double weight) {
 			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
 			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
 			
@@ -519,6 +560,8 @@ public class Graph <D> {
 //					new DefaultEdge<IVertex<D>, W>(vs, ve, w);
 			
 			mx.setWeight(vs.index(), ve.index(), weight);
+			
+			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
 		}
 		
 		public IEdge<IVertex<D>> removeEdge(D s, D e) {
