@@ -113,7 +113,6 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void removal_of_vertex() {
-		// TEST vertex 제거 시 연결된 edge 들을 제거해야 함. 나중에 구현.
 		vertice(new String[]{"A", "B", "C", "D"});
 		
 		edge("A", "B", 13).edge("A", "C", 7).edge("A", "D", 5)
