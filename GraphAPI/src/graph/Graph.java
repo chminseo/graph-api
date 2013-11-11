@@ -221,7 +221,7 @@ public class Graph <D> {
 		if ( w <= 0 ) {
 			throw new EdgeException ("negative weight value not allowed : " + w);
 		}
-		IEdge<IVertex<D>> newEdge = gType.addEdge(s, e, w);
+		IEdge<IVertex<D>> newEdge = gType.setEdge(s, e, w);
 		
 		notifyEdgeEdded(newEdge);
 	}
@@ -408,7 +408,7 @@ public class Graph <D> {
 	}
 	
 	abstract static class GraphType<D> {
-		public abstract IEdge<IVertex<D>> addEdge(D s, D e, double weight);
+		public abstract IEdge<IVertex<D>> setEdge(D s, D e, double weight);
 		public abstract IEdge<IVertex<D>> removeEdge(D s, D e);
 		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
 		public abstract List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType);
@@ -424,7 +424,7 @@ public class Graph <D> {
 		}
 
 		@Override
-		public IEdge<IVertex<D>> addEdge(D s, D e, double weight) {
+		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
 			
 			IndexVertex<D> vs = mx.findVertex(s);
 			IndexVertex<D> ve = mx.findVertex(e);
@@ -549,7 +549,7 @@ public class Graph <D> {
 		}
 		
 		@Override
-		public IEdge<IVertex<D>> addEdge(D s, D e, double weight) {
+		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
 			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
 			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
 			
