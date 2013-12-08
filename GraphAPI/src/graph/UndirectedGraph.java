@@ -1,6 +1,6 @@
 package graph;
 
-import graph.model.DefaultEdge;
+import graph.model.UndirectedEdge;
 import graph.model.EdgeException;
 import graph.model.IEdge;
 import graph.model.VertexException;
@@ -123,7 +123,7 @@ class UndirectedGraph<D, E extends IEdge<D>> extends Graph.GraphType<D, E> {
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);
 			}
 			
-			DefaultEdge<D> edge = new DefaultEdge<D>(vs.getData(), ve.getData(), weight);
+			UndirectedEdge<D> edge = new UndirectedEdge<D>(vs.getData(), ve.getData(), weight);
 //			cachedEdge.put(edge, edge);
 			
 			return (E) edge;
@@ -132,7 +132,7 @@ class UndirectedGraph<D, E extends IEdge<D>> extends Graph.GraphType<D, E> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public E newEdge(D s, D e, double weight) {
-			return (E) new DefaultEdge<D> (s, e, weight);
+			return (E) new UndirectedEdge<D> (s, e, weight);
 		}
 		
 	}

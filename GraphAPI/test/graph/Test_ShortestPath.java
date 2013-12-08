@@ -1,6 +1,7 @@
 package graph;
 
 import static org.junit.Assert.*;
+import graph.model.DirectedEdge;
 import graph.op.ShortestPath;
 
 import org.junit.After;

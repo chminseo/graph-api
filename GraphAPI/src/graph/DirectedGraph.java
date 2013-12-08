@@ -1,5 +1,6 @@
 package graph;
 
+import graph.model.DirectedEdge;
 import graph.model.EdgeException;
 import graph.model.IDirectedEdge;
 import graph.model.VertexException;
@@ -111,6 +112,7 @@ class DirectedGraph<D, E extends IDirectedEdge<D>> extends Graph.GraphType<D, E>
 			return edge;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public E newEdge(D s, D e, double weight) {
 			// TEST created and not tested method stub

@@ -3,6 +3,7 @@ import static org.junit.Assert.*;
 
 import graph.DuplicateVertexException;
 import graph.model.EdgeException;
+import graph.model.IDirectedEdge;
 import graph.model.IEdge.EdgeType;
 
 import org.junit.After;
@@ -10,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class Test_Directed_Graph extends TestGraph<DirectedEdge<String>>{
+public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 
 	@Before
 	public void setUp() throws Exception {
@@ -74,6 +75,12 @@ public class Test_Directed_Graph extends TestGraph<DirectedEdge<String>>{
 		graph.setEdge("A", "E", 24);
 		
 		assertEquals ( 24 , (int) graph.weight("A", "E")) ;
+		
+		IDirectedEdge<String> edge = graph.getEdge("A", "E");
+		
+		assertEquals ( "A", edge.getStartVertex());
+		assertEquals ( "E", edge.getEndVertex());
+		
 		assertNotNull ( graph.getEdge("A", "E"));
 		// directed graph이기 때문에 (A,E)는 존재하나 (E,A)는 존재하지 않아야함.
 		assertNoEdge("E", "A");

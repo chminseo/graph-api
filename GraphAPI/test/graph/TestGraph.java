@@ -1,7 +1,8 @@
 package graph;
 
 import static org.junit.Assert.*;
-import graph.model.DefaultEdge;
+import graph.model.UndirectedEdge;
+import graph.model.IDirectedEdge;
 import graph.model.IEdge;
 
 import org.junit.After;
@@ -19,12 +20,12 @@ public class TestGraph<E extends IEdge<String>> {
 	
 	@SuppressWarnings("unchecked")
 	protected void installDirectedGraph(){
-		graph = (Graph<String, E>) Graphs.<String, DirectedEdge<String>>newDirectedGraph();
+		graph = (Graph<String, E>) Graphs.<String, IDirectedEdge<String>>newDirectedGraph();
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected void installUndirectedGraph() {
-		graph = (Graph<String, E>) Graphs.<String, DefaultEdge<String>>newUndirectedGraph();
+		graph = (Graph<String, E>) Graphs.<String, UndirectedEdge<String>>newUndirectedGraph();
 	}
 	
 	@After
