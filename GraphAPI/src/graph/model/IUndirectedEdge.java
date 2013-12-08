@@ -1,6 +1,6 @@
 package graph.model;
 
-public interface IEdge<D> {
+public interface IUndirectedEdge<D> {
 
 	public enum EdgeType {
 		OUTGOING_EDGE(1),

@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 import graph.DuplicateVertexException;
 import graph.model.EdgeException;
 import graph.model.IDirectedEdge;
-import graph.model.IEdge.EdgeType;
+import graph.model.IUndirectedEdge.EdgeType;
 
 import org.junit.After;
 import org.junit.Before;

@@ -1,9 +1,9 @@
 package graph;
 
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 
 public interface EdgeListener<D> {
-	void edgeCreated(IEdge<D> edge);
-	void edgeRemoved(IEdge<D> edge);
-	void edgeChanged(IEdge<D> edge, double oldWeight);
+	void edgeCreated(IUndirectedEdge<D> edge);
+	void edgeRemoved(IUndirectedEdge<D> edge);
+	void edgeChanged(IUndirectedEdge<D> edge, double oldWeight);
 }

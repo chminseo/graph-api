@@ -3,13 +3,13 @@ package graph;
 import static org.junit.Assert.*;
 import graph.model.UndirectedEdge;
 import graph.model.IDirectedEdge;
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestGraph<E extends IEdge<String>> {
+public class TestGraph<E extends IUndirectedEdge<String>> {
 
 	Graph<String, E> graph ;
 	
@@ -25,7 +25,7 @@ public class TestGraph<E extends IEdge<String>> {
 	
 	@SuppressWarnings("unchecked")
 	protected void installUndirectedGraph() {
-		graph = (Graph<String, E>) Graphs.<String, UndirectedEdge<String>>newUndirectedGraph();
+		graph = (Graph<String, E>) Graphs.<String, IUndirectedEdge<String>>newUndirectedGraph();
 	}
 	
 	@After
@@ -80,7 +80,7 @@ public class TestGraph<E extends IEdge<String>> {
 		}
 	}
 
-	protected static abstract class VertexAdapter<D, E extends IEdge<D>> implements VertextListener<D, E> {
+	protected static abstract class VertexAdapter<D, E extends IUndirectedEdge<D>> implements VertextListener<D, E> {
 		@Override
 		public void vertexAdded(D vertex, Graph<D, E> graph) {}
 
@@ -94,13 +94,13 @@ public class TestGraph<E extends IEdge<String>> {
 	protected static class EdgeAdaptor<D> implements EdgeListener<D>{
 
 		@Override
-		public void edgeCreated(IEdge<D> edge) {}
+		public void edgeCreated(IUndirectedEdge<D> edge) {}
 
 		@Override
-		public void edgeRemoved(IEdge<D> edge) {}
+		public void edgeRemoved(IUndirectedEdge<D> edge) {}
 
 		@Override
-		public void edgeChanged(IEdge<D> edge, double oldWeight) {}
+		public void edgeChanged(IUndirectedEdge<D> edge, double oldWeight) {}
 		
 	}
 

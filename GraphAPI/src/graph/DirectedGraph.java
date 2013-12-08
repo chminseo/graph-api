@@ -4,7 +4,7 @@ import graph.model.DirectedEdge;
 import graph.model.EdgeException;
 import graph.model.IDirectedEdge;
 import graph.model.VertexException;
-import graph.model.IEdge.EdgeType;
+import graph.model.IUndirectedEdge.EdgeType;
 
 import java.util.ArrayList;
 import java.util.Iterator;

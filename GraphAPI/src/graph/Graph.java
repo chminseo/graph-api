@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import graph.model.IDirectedEdge;
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 import graph.model.EdgeException;
-import graph.model.IEdge.EdgeType;
+import graph.model.IUndirectedEdge.EdgeType;
 import graph.model.VertexException;
 
-public class Graph <D, E extends IEdge<D>> {
+public class Graph <D, E extends IUndirectedEdge<D>> {
 
 	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
 		
-	private WeakHashMap<IEdge<D>, IEdge<D>> 
-		cachedEdge = new WeakHashMap<IEdge<D>, IEdge<D>>();
+	private WeakHashMap<IUndirectedEdge<D>, IUndirectedEdge<D>> 
+		cachedEdge = new WeakHashMap<IUndirectedEdge<D>, IUndirectedEdge<D>>();
 	
 	final private HashSet<DoubleMatrix> mxSet = new HashSet<DoubleMatrix>();
 	
@@ -39,7 +39,7 @@ public class Graph <D, E extends IEdge<D>> {
 		return  mx;
 	}
 	
-	static <D, E extends IEdge<D>> Graph<D, E> newUndirectedType() {
+	static <D, E extends IUndirectedEdge<D>> Graph<D, E> newUndirectedType() {
 		Graph<D, E> mx = new Graph<D, E>(0,0);
 		mx.gType = new UndirectedGraph<D, E>(mx, mx.vset);
 		return mx;
@@ -353,7 +353,7 @@ public class Graph <D, E extends IEdge<D>> {
 		throw new VertexException("no such vertex : " + s);
 	}
 	
-	abstract static class GraphType<D, E extends IEdge<D>> {
+	abstract static class GraphType<D, E extends IUndirectedEdge<D>> {
 		public abstract E setEdge(D s, D e, double weight);
 		public abstract E removeEdge(D s, D e);
 		public abstract E getEdge(D s, D e );

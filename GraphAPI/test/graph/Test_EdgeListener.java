@@ -2,7 +2,7 @@ package graph;
 
 import static org.junit.Assert.*;
 import graph.model.DirectedEdge;
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,17 +49,17 @@ public class Test_EdgeListener extends TestGraph<DirectedEdge<String>> {
 		int called_changed = 0;
 		int called_removal = 0;
 		@Override
-		public void edgeCreated(IEdge<String> edge) {
+		public void edgeCreated(IUndirectedEdge<String> edge) {
 			called_creation ++ ;
 		}
 		
 		@Override
-		public void edgeChanged(IEdge<String> edge, double oldWeight) {
+		public void edgeChanged(IUndirectedEdge<String> edge, double oldWeight) {
 			called_changed ++ ;
 		}
 		
 		@Override
-		public void edgeRemoved(IEdge<String> edge) {
+		public void edgeRemoved(IUndirectedEdge<String> edge) {
 			called_removal ++ ;
 		}
 	}

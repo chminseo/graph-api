@@ -1,14 +1,14 @@
 package graph.op;
 
 import graph.Graph;
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 import graph.model.VertexException;
 
 public class ShortestPath<D> {
 	
-	private Graph<D, IEdge<D>> graph ;
+	private Graph<D, IUndirectedEdge<D>> graph ;
 	
-	public ShortestPath(Graph<D, IEdge<D>> g ) {
+	public ShortestPath(Graph<D, IUndirectedEdge<D>> g ) {
 		this.graph = g;
 	}
 	

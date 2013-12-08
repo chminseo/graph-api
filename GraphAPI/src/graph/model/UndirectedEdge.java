@@ -2,7 +2,7 @@ package graph.model;
 
 import java.lang.reflect.Array;
 
-public class UndirectedEdge<D> implements IEdge<D> {
+public class UndirectedEdge<D> implements IUndirectedEdge<D> {
 	
 	public double weight ;
 	

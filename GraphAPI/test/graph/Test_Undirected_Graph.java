@@ -3,7 +3,7 @@ package graph;
 import static org.junit.Assert.*;
 import graph.model.UndirectedEdge;
 import graph.model.EdgeException;
-import graph.model.IEdge.EdgeType;
+import graph.model.IUndirectedEdge.EdgeType;
 
 import org.junit.After;
 import org.junit.Before;

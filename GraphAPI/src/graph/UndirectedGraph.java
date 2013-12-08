@@ -2,15 +2,15 @@ package graph;
 
 import graph.model.UndirectedEdge;
 import graph.model.EdgeException;
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 import graph.model.VertexException;
-import graph.model.IEdge.EdgeType;
+import graph.model.IUndirectedEdge.EdgeType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-class UndirectedGraph<D, E extends IEdge<D>> extends Graph.GraphType<D, E> {
+class UndirectedGraph<D, E extends IUndirectedEdge<D>> extends Graph.GraphType<D, E> {
 		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D, E> graphFacade ;
 		

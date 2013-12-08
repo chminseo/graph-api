@@ -1,7 +1,7 @@
 package graph;
 
 import graph.model.IDirectedEdge;
-import graph.model.IEdge;
+import graph.model.IUndirectedEdge;
 
 public class Graphs {
 
@@ -11,7 +11,7 @@ public class Graphs {
 		return Graph.<D, E>newDirectedType();
 	}
 	
-	public static <D,E extends IEdge<D>> Graph<D, E> newUndirectedGraph() {
+	public static <D,E extends IUndirectedEdge<D>> Graph<D, E> newUndirectedGraph() {
 		return Graph.<D, E>newUndirectedType();
 	}
 }
