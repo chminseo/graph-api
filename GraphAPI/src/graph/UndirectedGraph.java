@@ -1,7 +1,5 @@
 package graph;
 
-import graph.Graph.GraphType;
-import graph.Graph.IndexVertex;
 import graph.model.DefaultEdge;
 import graph.model.EdgeException;
 import graph.model.IEdge;
@@ -14,10 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 
 class UndirectedGraph<D> extends Graph.GraphType<D> {
-		final private ArrayList<Graph.IndexVertex<D>> vset ;
+		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D> mx ;
 		
-		public UndirectedGraph(Graph<D> mx, ArrayList<Graph.IndexVertex<D>> list) {
+		public UndirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
 			this.mx = mx;
 		}
@@ -25,8 +23,8 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 		@Override
 		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
 			
-			Graph.IndexVertex<D> vs = mx.findVertex(s);
-			Graph.IndexVertex<D> ve = mx.findVertex(e);
+			IndexVertex<D> vs = mx.findVertex(s);
+			IndexVertex<D> ve = mx.findVertex(e);
 			
 			mx.addVertex(vs, true);
 			mx.addVertex(ve, true);
@@ -35,7 +33,7 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 			int ie = ve.index();
 			
 			if ( is < ie) {
-				Graph.IndexVertex<D> tmp = vs;
+				IndexVertex<D> tmp = vs;
 				vs = ve;
 				ve = tmp;
 			}
@@ -46,14 +44,14 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 		}
 		
 		public IEdge<IVertex<D>> removeEdge(D s, D e) {
-			Graph.IndexVertex<D> vs = mx.findVertex(s);
-			Graph.IndexVertex<D> ve = mx.findVertex(e);
+			IndexVertex<D> vs = mx.findVertex(s);
+			IndexVertex<D> ve = mx.findVertex(e);
 			
 			int is = vs.index();
 			int ie = ve.index();
 			
 			if ( is < ie ) {
-				Graph.IndexVertex<D> tmp = vs;
+				IndexVertex<D> tmp = vs;
 				vs = ve;
 				ve = tmp;
 			}
@@ -63,11 +61,11 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
 		}
 		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
-			Graph.IndexVertex<D> vs = null;
-			Iterator<Graph.IndexVertex<D>> it = vset.iterator();
+			IndexVertex<D> vs = null;
+			Iterator<IndexVertex<D>> it = vset.iterator();
 			
 			while ( it.hasNext()) {
-				Graph.IndexVertex<D> iv = it.next();
+				IndexVertex<D> iv = it.next();
 				if ( iv.getData().equals(s) ) {
 					vs = iv;
 					break;
@@ -83,14 +81,14 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 
 		@Override
 		public IEdge<IVertex<D>> getEdge(D s, D e) {
-			Graph.IndexVertex<D> vs = null ;
-			Graph.IndexVertex<D> ve = null ;
+			IndexVertex<D> vs = null ;
+			IndexVertex<D> ve = null ;
 			double weight = -1;
 			
-			Iterator<Graph.IndexVertex<D>> it = vset.iterator();
+			Iterator<IndexVertex<D>> it = vset.iterator();
 			
 			while ( it.hasNext()) {
-				Graph.IndexVertex<D> iv = it.next();
+				IndexVertex<D> iv = it.next();
 				if ( iv.getData().equals(s) ) {
 					vs = iv; 
 				}
@@ -117,7 +115,7 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 			int ie = ve.index();
 			
 			if ( is < ie) {
-				Graph.IndexVertex<D> tmp = vs;
+				IndexVertex<D> tmp = vs;
 				vs = ve;
 				ve = tmp;
 			}

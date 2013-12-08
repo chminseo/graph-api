@@ -1,7 +1,5 @@
 package graph;
 
-import graph.Graph.GraphType;
-import graph.Graph.IndexVertex;
 import graph.model.DefaultEdge;
 import graph.model.EdgeException;
 import graph.model.IEdge;
@@ -16,17 +14,17 @@ import java.util.List;
 
 class DirectedGraph<D> extends Graph.GraphType<D>{
 
-		final private ArrayList<Graph.IndexVertex<D>> vset ;
+		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D> mx ;
-		public DirectedGraph(Graph<D> mx, ArrayList<Graph.IndexVertex<D>> list) {
+		public DirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
 			this.mx = mx;
 		}
 		
 		@Override
 		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
-			Graph.IndexVertex<D> vs = new Graph.IndexVertex<D>(new Vertex<D>(s), vset);
-			Graph.IndexVertex<D> ve = new Graph.IndexVertex<D>(new Vertex<D>(e), vset);
+			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
+			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
 			
 			mx.addVertex(vs, true);
 			mx.addVertex(ve, true);
@@ -41,8 +39,8 @@ class DirectedGraph<D> extends Graph.GraphType<D>{
 		
 		public IEdge<IVertex<D>> removeEdge(D s, D e) {
 			// TEST 구현해야함.
-			Graph.IndexVertex<D> vs = mx.findVertex(s);
-			Graph.IndexVertex<D> ve = mx.findVertex(e);
+			IndexVertex<D> vs = mx.findVertex(s);
+			IndexVertex<D> ve = mx.findVertex(e);
 			
 			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
 			
@@ -51,11 +49,11 @@ class DirectedGraph<D> extends Graph.GraphType<D>{
 		
 		@Override
 		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
-			Graph.IndexVertex<D> vs = null;
-			Iterator<Graph.IndexVertex<D>> it = vset.iterator();
+			IndexVertex<D> vs = null;
+			Iterator<IndexVertex<D>> it = vset.iterator();
 			
 			while ( it.hasNext()) {
-				Graph.IndexVertex<D> iv = it.next();
+				IndexVertex<D> iv = it.next();
 				if ( iv.getData().equals(s) ) {
 					vs = iv;
 					break;
@@ -73,14 +71,14 @@ class DirectedGraph<D> extends Graph.GraphType<D>{
 
 		@Override
 		public IEdge<IVertex<D>> getEdge(D s, D e) {
-			Graph.IndexVertex<D> vs = null ;
-			Graph.IndexVertex<D> ve = null ;
+			IndexVertex<D> vs = null ;
+			IndexVertex<D> ve = null ;
 			double weight = -1.0;
 			
-			Iterator<Graph.IndexVertex<D>> it = vset.iterator();
+			Iterator<IndexVertex<D>> it = vset.iterator();
 			
 			while ( it.hasNext()) {
-				Graph.IndexVertex<D> iv = it.next();
+				IndexVertex<D> iv = it.next();
 				if ( iv.getData().equals(s) ) {
 					vs = iv; 
 				}
