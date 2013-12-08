@@ -1,12 +1,13 @@
 package graph;
 
+import graph.model.IDirectedEdge;
 import graph.model.IEdge;
 
 public class Graphs {
 
 	private Graphs(){}
 	
-	public static <D,E extends DirectedEdge<D>> Graph<D, E> newDirectedGraph() {
+	public static <D,E extends IDirectedEdge<D>> Graph<D, E> newDirectedGraph() {
 		return Graph.<D, E>newDirectedType();
 	}
 	
