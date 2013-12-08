@@ -3,6 +3,7 @@ package graph;
 import static org.junit.Assert.*;
 import graph.model.IEdge;
 import graph.model.IVertex;
+import graph.model.Vertex;
 
 import org.junit.After;
 import org.junit.Before;
@@ -70,6 +71,17 @@ public class TestGraph {
 		return this;
 	}
 	
+	public void assertVertexValues(String [] data, IVertex<?>[] vs) {
+		assertEquals (data.length , vs.length);
+		for (int i = 0; i < vs.length; i++) {
+			assertEquals(new Vertex<String>(data[i]), vs[i]);
+		}
+		
+		for( String s : data) {
+			assertTrue ( graph.hasVertex(s));
+		}
+	}
+
 	protected static abstract class VertexAdapter<D> implements VertextListener<D> {
 		@Override
 		public void vertexAdded(IVertex<D> vertex, Graph<D> graph) {}

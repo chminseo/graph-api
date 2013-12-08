@@ -3,8 +3,6 @@ import static org.junit.Assert.*;
 
 import graph.DuplicateVertexException;
 import graph.model.EdgeException;
-import graph.model.Vertex;
-import graph.model.IVertex;
 import graph.model.IEdge.EdgeType;
 
 import org.junit.After;
@@ -29,7 +27,7 @@ public class Test_Directed_Graph extends TestGraph{
 		vertexes("Incheon", "Seoul", "Busan", "Suwon");
 		graph.setEdge("Seoul", "Busan", 233);
 		
-		check_list(
+		assertVertexValues(
 				new String[]{"Incheon", "Seoul", "Busan", "Suwon"},
 				graph.listVertice()
 		);
@@ -41,7 +39,7 @@ public class Test_Directed_Graph extends TestGraph{
 		
 		graph.setEdge("Suwon", "Seoul", 23);
 		
-		check_list(
+		assertVertexValues(
 				new String[]{"Incheon", "Seoul", "Busan", "Suwon" }, 
 				graph.listVertice()
 		);
@@ -158,17 +156,6 @@ public class Test_Directed_Graph extends TestGraph{
 		
 		assertEquals (1, graph.getEdges("A", EdgeType.OUTGOING_EDGE).size());
 		assertNoEdge("A", "C");
-	}
-	
-	public void check_list(String [] data, IVertex<?>[] vs) {
-		assertEquals (data.length , vs.length);
-		for (int i = 0; i < vs.length; i++) {
-			assertEquals(new Vertex<String>(data[i]), vs[i]);
-		}
-		
-		for( String s : data) {
-			assertTrue ( graph.hasVertex(s));
-		}
 	}
 
 }
