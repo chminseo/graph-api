@@ -66,15 +66,7 @@ public class Graph <D, E extends IUndirectedEdge<D>> {
 	public int getVertexSize() {
 		return vset.size();
 	}
-	
-//	private void addVertext(IndexVertex<D> v){
-//		// TODO not thread-safe
-//		if ( vset.contains(v) ) {
-//			throw new DuplicateVertexException(v);
-//		}
-//		addVertex(v, false);
-//	}
-	
+		
 	void addVertex(IndexVertex<D> v ) {
 		if ( hasVertex(v) ) {
 				throw new DuplicateVertexException("vertex already exists : " + v.toString());

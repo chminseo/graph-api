@@ -1,13 +1,11 @@
 package graph;
 
 import static org.junit.Assert.*;
-import graph.model.UndirectedEdge;
 import graph.model.IDirectedEdge;
 import graph.model.IUndirectedEdge;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 public class TestGraph<E extends IUndirectedEdge<String>> {
 

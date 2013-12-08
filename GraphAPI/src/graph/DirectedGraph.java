@@ -32,7 +32,6 @@ class DirectedGraph<D, E extends IDirectedEdge<D>> extends Graph.GraphType<D, E>
 		}
 		
 		public E removeEdge(D s, D e) {
-			// TEST 구현해야함.
 			IndexVertex<D> vs = graphFacade.findVertex(s);
 			IndexVertex<D> ve = graphFacade.findVertex(e);
 			
@@ -115,7 +114,6 @@ class DirectedGraph<D, E extends IDirectedEdge<D>> extends Graph.GraphType<D, E>
 		@SuppressWarnings("unchecked")
 		@Override
 		public E newEdge(D s, D e, double weight) {
-			// TEST created and not tested method stub
 			return (E) new DirectedEdge<D>(s, e, weight);
 		}
 	}
