@@ -3,8 +3,8 @@ import static org.junit.Assert.*;
 
 import graph.DuplicateVertexException;
 import graph.model.EdgeException;
+import graph.model.EdgeType;
 import graph.model.IDirectedEdge;
-import graph.model.IUndirectedEdge.EdgeType;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +16,7 @@ public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 	@Before
 	public void setUp() throws Exception {
 		installDirectedGraph();
+		vertexes("A", "B", "C", "D", "E");
 	}
 
 	@After
@@ -24,39 +25,31 @@ public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 
 	@Test
 	public void test_add_vertext() {
-		
-		vertexes("Incheon", "Seoul", "Busan", "Suwon");
-		graph.setEdge("Seoul", "Busan", 233);
-		
+
+		graph.addVertex("M");
 		assertVertexValues(
-				new String[]{"Incheon", "Seoul", "Busan", "Suwon"},
+				new String[]{"A", "B", "C", "D", "E", "M"}, 
 				graph.listVertex()
 		);
-		
+	}
+	
+	@Test
+	public void when_duplicated_vertex_inserted() {
 		try {
-			graph.addVertex("Seoul");
+			graph.addVertex("A");
 			fail("DuplicateVertextException should be thrown, but not");
 		} catch (DuplicateVertexException e) {}
-		
-		graph.setEdge("Suwon", "Seoul", 23);
-		
-		assertVertexValues(
-				new String[]{"Incheon", "Seoul", "Busan", "Suwon" }, 
-				graph.listVertex()
-		);
 	}
 	
 	
 	
 	@Test
-	public void test_weight_of_edge() {
-		vertexes("A", "B", "E", "I", "J", "K");
+	public void getting_weight_of_edge() {
+		graph.setEdge("A", "B", 24);
+		graph.setEdge("B", "E", 11);
 		
-		graph.setEdge("A", "E", 24);
-		graph.setEdge("B", "K", 11);
-		
-		assertEquals (24.0, graph.getEdge("A", "E").getWeight(), 0.1);
-		assertEquals (11.0, graph.getEdge("B", "K").getWeight(), 0.1);
+		assertEquals (24.0, graph.getEdge("A", "B").getWeight(), 0.1);
+		assertEquals (11.0, graph.getEdge("B", "E").getWeight(), 0.1);
 	}
 	
 	@Test
@@ -68,22 +61,23 @@ public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 	}
 	
 	@Test
-	public void asymmetry_edge_in_directed_graph () {
-		vertexes("A", "B", "C", "D", "E");		
-		assertNoEdge("A", "E");
-		
+	public void edge_isasymmetry_in_directed_graph () {
 		graph.setEdge("A", "E", 24);
 		
 		assertEquals ( 24 , (int) graph.weight("A", "E")) ;
 		
-		IDirectedEdge<String> edge = graph.getEdge("A", "E");
-		
-		assertEquals ( "A", edge.getStartVertex());
-		assertEquals ( "E", edge.getEndVertex());
-		
 		assertNotNull ( graph.getEdge("A", "E"));
 		// directed graph이기 때문에 (A,E)는 존재하나 (E,A)는 존재하지 않아야함.
 		assertNoEdge("E", "A");
+	}
+	
+	@Test
+	public void two_kind_of_vertexes_in_edge() {
+		graph.setEdge("A", "E", 24);		
+		IDirectedEdge<String> edgeAE = graph.getEdge("A", "E");
+
+		assertEquals ( "A", edgeAE.getStartVertex());
+		assertEquals ( "E", edgeAE.getEndVertex());
 	}
 	
 	/**    \ to
@@ -94,11 +88,8 @@ public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 	 *     C |
 	 */
 	@Test
-	public void test_get_edges_from_the_vertex() {
-		vertexes("A", "B", "C");
-		edge("A", "B", 10);
-		edge("A", "C", 20);
-		edge("B", "C", 30);
+	public void querying_edges_from_a_vertex() {
+		edge("A", "B", 10).edge("A", "C", 20).edge("B", "C", 30);
 		
 		assertEquals ( 2, graph.getEdges("A", EdgeType.ANY_EDGE).size());
 		assertEquals ( 0, graph.getEdges("A", EdgeType.INCOMING_EDGE).size());
@@ -111,14 +102,11 @@ public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 	
 	@Test
 	public void weight_of_the_same_vertex_should_be_zero () {
-		vertexes("A", "B");
-		
 		assertEquals (0, graph.weight("A", "A"), 0.1 );
 	}
 	
 	@Test
 	public void removal_of_vertex() {
-		vertexes("A", "B", "C", "D");
 		
 		edge("A", "B", 13).edge("A", "C", 7).edge("A", "D", 5)
 			.edge("B", "C", 11);
@@ -151,7 +139,6 @@ public class Test_Directed_Graph extends TestGraph<IDirectedEdge<String>>{
 	 */
 	@Test
 	public void removal_of_edge_between_vertice() {
-		vertexes("A", "B", "C", "D");
 		edge("A", "B", 10).edge("A", "C", 20);
 		edge("B", "C", 30).edge("B", "D",  6);
 		edge("C", "D", 12).edge("D", "A", 33);
