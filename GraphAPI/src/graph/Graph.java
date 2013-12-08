@@ -77,7 +77,7 @@ public class Graph <D> {
 		addVertex(v, false);
 	}
 	
-	private <V extends IVertex<D>> void addVertex(V v, boolean skipIfExist ) {
+	<V extends IVertex<D>> void addVertex(V v, boolean skipIfExist ) {
 		if ( hasVertex(v) ) {
 			if ( ! skipIfExist ) {
 				throw new DuplicateVertexException(v);
@@ -238,7 +238,7 @@ public class Graph <D> {
 		}
 	}
 	
-	private void setWeight(int r, int c, double weight) {
+	void setWeight(int r, int c, double weight) {
 		int ox = r - r % base;
 		int oy = c - c % base;
 		
@@ -252,7 +252,7 @@ public class Graph <D> {
 		return gType.getEdge(s, e);
 	}
 	
-	private double getWeight(int r, int c) {
+	double getWeight(int r, int c) {
 		return getMatrix(r, c).getValue(r, c);
 	}
 	
@@ -260,7 +260,7 @@ public class Graph <D> {
 		return new DefaultEdge<IVertex<?>>(vset.get(from), vset.get(to), weight );
 	}
 	
-	private List<IEdge<IVertex<?>>> listWeights(IndexVertex<D> vs, EdgeType e) {
+	List<IEdge<IVertex<?>>> listWeights(IndexVertex<D> vs, EdgeType e) {
 		
 		Iterator<DoubleMatrix> it = mxSet.iterator();
 		
@@ -388,7 +388,7 @@ public class Graph <D> {
 	static class IndexVertex<D> implements IVertex<D> {
 
 		private List<? extends IVertex<D>> list ;
-		private IVertex<D> v ;
+		IVertex<D> v ;
 		public IndexVertex(IVertex<D> v, List<? extends IVertex<D>> list) {
 			this.v = v;
 			this.list = list;
@@ -424,235 +424,5 @@ public class Graph <D> {
 		public abstract IEdge<IVertex<D>> removeEdge(D s, D e);
 		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
 		public abstract List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType);
-	}
-	
-	private static class UndirectedGraph<D> extends GraphType<D> {
-		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D> mx ;
-		
-		public UndirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
-			vset = list;
-			this.mx = mx;
-		}
-
-		@Override
-		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
-			
-			IndexVertex<D> vs = mx.findVertex(s);
-			IndexVertex<D> ve = mx.findVertex(e);
-			
-			mx.addVertex(vs, true);
-			mx.addVertex(ve, true);
-			
-			int is = vs.index();
-			int ie = ve.index();
-			
-			if ( is < ie) {
-				IndexVertex<D> tmp = vs;
-				vs = ve;
-				ve = tmp;
-			}
-			
-			mx.setWeight(vs.index(), ve.index(), weight);
-			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
-			
-		}
-		
-		public IEdge<IVertex<D>> removeEdge(D s, D e) {
-			// TEST 구현해야함.
-			IndexVertex<D> vs = mx.findVertex(s);
-			IndexVertex<D> ve = mx.findVertex(e);
-			
-			int is = vs.index();
-			int ie = ve.index();
-			
-			if ( is < ie ) {
-				IndexVertex<D> tmp = vs;
-				vs = ve;
-				ve = tmp;
-			}
-			
-			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
-			
-			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
-		}
-		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
-			IndexVertex<D> vs = null;
-			Iterator<IndexVertex<D>> it = vset.iterator();
-			
-			while ( it.hasNext()) {
-				IndexVertex<D> iv = it.next();
-				if ( iv.getData().equals(s) ) {
-					vs = iv;
-					break;
-				}
-			}
-			
-			if ( vs == null ) {				
-				throw new VertexException("can not find vertex s : " + s);
-			}
-			
-			return mx.listWeights(vs, EdgeType.ANY_EDGE);
-		};
-
-		@Override
-		public IEdge<IVertex<D>> getEdge(D s, D e) {
-			// TEST created and not tested method stub
-			IndexVertex<D> vs = null ;
-			IndexVertex<D> ve = null ;
-			double weight = -1;
-			
-			Iterator<IndexVertex<D>> it = vset.iterator();
-			
-			while ( it.hasNext()) {
-				IndexVertex<D> iv = it.next();
-				if ( iv.getData().equals(s) ) {
-					vs = iv; 
-				}
-				
-				if ( iv.getData().equals(e) ) {
-					ve = iv;
-				}
-				
-				if ( vs != null && ve != null ) {
-					break;
-				}
-			}
-			
-			
-			if ( vs == null ) {
-				throw new VertexException("can not find vertex : " + s);
-			}
-			
-			if ( ve == null ) {
-				throw new VertexException("can not find vertex : " + e);
-			}
-			
-			int is = vs.index();
-			int ie = ve.index();
-			
-			if ( is < ie) {
-				IndexVertex<D> tmp = vs;
-				vs = ve;
-				ve = tmp;
-			}
-			
-			weight = mx.getWeight(vs.index(), ve.index());
-			
-			if ( weight < 0 ) {
-				throw new EdgeException("cannot find edge between : " + s + " and " + e);
-			}
-			
-			DefaultEdge<IVertex<D>> edge = new DefaultEdge<IVertex<D>>(vs, ve, weight);
-//			cachedEdge.put(edge, edge);
-			
-			return edge;
-		}
-		
-	}
-	
-	private static class DirectedGraph<D> extends GraphType<D>{
-
-		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D> mx ;
-		public DirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
-			vset = list;
-			this.mx = mx;
-		}
-		
-		@Override
-		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
-			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
-			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
-			
-			mx.addVertex(vs, true);
-			mx.addVertex(ve, true);
-			
-//			DefaultEdge<IVertex<D>, W> edge = 
-//					new DefaultEdge<IVertex<D>, W>(vs, ve, w);
-			
-			mx.setWeight(vs.index(), ve.index(), weight);
-			
-			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
-		}
-		
-		public IEdge<IVertex<D>> removeEdge(D s, D e) {
-			// TEST 구현해야함.
-			IndexVertex<D> vs = mx.findVertex(s);
-			IndexVertex<D> ve = mx.findVertex(e);
-			
-			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
-			
-			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
-		}
-		
-		@Override
-		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
-			IndexVertex<D> vs = null;
-			Iterator<IndexVertex<D>> it = vset.iterator();
-			
-			while ( it.hasNext()) {
-				IndexVertex<D> iv = it.next();
-				if ( iv.getData().equals(s) ) {
-					vs = iv;
-					break;
-				}
-			}
-			
-			if ( vs == null ) {				
-				throw new VertexException("can not find vertex s : " + s);
-			}
-			
-			return mx.listWeights(vs, eType);
-			
-			
-		}
-
-		@Override
-		public IEdge<IVertex<D>> getEdge(D s, D e) {
-			IndexVertex<D> vs = null ;
-			IndexVertex<D> ve = null ;
-			double weight = -1.0;
-			
-			Iterator<IndexVertex<D>> it = vset.iterator();
-			
-			while ( it.hasNext()) {
-				IndexVertex<D> iv = it.next();
-				if ( iv.getData().equals(s) ) {
-					vs = iv; 
-				}
-				
-				if ( iv.getData().equals(e) ) {
-					ve = iv;
-				}
-				
-				if ( vs != null && ve != null ) {
-					break;
-				}
-			}
-			
-			if ( vs == null ) {
-				throw new VertexException("can not find vertex s : " + s);
-			}
-			
-			if ( ve == null ) {
-				throw new VertexException("can not find vertex e : " + e);
-			}
-			
-			
-			weight = mx.getWeight(vs.index(), ve.index());
-			
-			if ( weight < 0 ) {
-				throw new EdgeException("cannot find edge between : " + s + " and " + e);
-			}
-			
-			DefaultEdge<IVertex<D>> edge ;
-			
-			edge = new DefaultEdge<IVertex<D>>(vs, ve, weight);
-			
-//			cachedEdge.put(edge, edge);
-			
-			return edge;
-		}
 	}
 }
