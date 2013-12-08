@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class Test_Directed_Graph extends TestGraph{
+public class Test_Directed_Graph extends TestGraph<DirectedEdge<String>>{
 
 	@Before
 	public void setUp() throws Exception {
@@ -29,7 +29,7 @@ public class Test_Directed_Graph extends TestGraph{
 		
 		assertVertexValues(
 				new String[]{"Incheon", "Seoul", "Busan", "Suwon"},
-				graph.listVertice()
+				graph.listVertex()
 		);
 		
 		try {
@@ -41,7 +41,7 @@ public class Test_Directed_Graph extends TestGraph{
 		
 		assertVertexValues(
 				new String[]{"Incheon", "Seoul", "Busan", "Suwon" }, 
-				graph.listVertice()
+				graph.listVertex()
 		);
 	}
 	

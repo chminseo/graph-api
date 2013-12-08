@@ -1,6 +1,6 @@
 package graph.model;
 
-public interface IEdge<V extends IVertex<?>> {
+public interface IEdge<D> {
 
 	public enum EdgeType {
 		OUTGOING_EDGE(1),
@@ -25,5 +25,5 @@ public interface IEdge<V extends IVertex<?>> {
 	
 	public double getWeight();
 	
-	public V [] getVertexes();
+	public D [] getVertexes();
 }

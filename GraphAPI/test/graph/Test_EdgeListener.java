@@ -2,13 +2,12 @@ package graph;
 
 import static org.junit.Assert.*;
 import graph.model.IEdge;
-import graph.model.IVertex;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Test_EdgeListener extends TestGraph {
+public class Test_EdgeListener extends TestGraph<DirectedEdge<String>> {
 
 	@Before
 	public void setUp() throws Exception {
@@ -44,22 +43,22 @@ public class Test_EdgeListener extends TestGraph {
 		
 	}
 
-	static class EdgeListenerImpl extends EdgeAdaptor<String, IVertex<String>> {
+	static class EdgeListenerImpl extends EdgeAdaptor<String> {
 		int called_creation = 0;
 		int called_changed = 0;
 		int called_removal = 0;
 		@Override
-		public void edgeCreated(IEdge<IVertex<String>> edge) {
+		public void edgeCreated(IEdge<String> edge) {
 			called_creation ++ ;
 		}
 		
 		@Override
-		public void edgeChanged(IEdge<IVertex<String>> edge, double oldWeight) {
+		public void edgeChanged(IEdge<String> edge, double oldWeight) {
 			called_changed ++ ;
 		}
 		
 		@Override
-		public void edgeRemoved(IEdge<IVertex<String>> edge) {
+		public void edgeRemoved(IEdge<String> edge) {
 			called_removal ++ ;
 		}
 	}

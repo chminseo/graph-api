@@ -1,35 +1,32 @@
 package graph;
 
 import static org.junit.Assert.*;
+import graph.model.DefaultEdge;
 import graph.model.IEdge;
-import graph.model.IVertex;
-import graph.model.Vertex;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestGraph {
+public class TestGraph<E extends IEdge<String>> {
 
-	Graph<String, DirectedEdge<IVertex<String>>> graph ;
+	Graph<String, E> graph ;
 	
 	@Before
 	public void setUp() throws Exception {
 		;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void installDirectedGraph(){
-		graph = Graphs.<String, DirectedEdge<IVertex<String>>>newDirectedGraph();
+		graph = (Graph<String, E>) Graphs.<String, DirectedEdge<String>>newDirectedGraph();
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void installUndirectedGraph() {
-		graph = Graphs.<String, DirectedEdge<IVertex<String>>>newUndirectedGraph();
+		graph = (Graph<String, E>) Graphs.<String, DefaultEdge<String>>newUndirectedGraph();
 	}
 	
-	protected void installVertexes() {
-		
-	}
-
 	@After
 	public void tearDown() throws Exception {
 	}
@@ -39,7 +36,7 @@ public class TestGraph {
 	 * installing vertice
 	 * @param ao
 	 */
-	void vertexes(String... ao) {
+	protected void vertexes(String... ao) {
 		for(String s : ao) {
 			graph.addVertex(s);
 		}
@@ -66,43 +63,43 @@ public class TestGraph {
 	 * @param weight
 	 * @return
 	 */
-	TestGraph edge(String from, String to, double weight) {
+	TestGraph<E> edge(String from, String to, double weight) {
 		graph.setEdge(from, to, weight);
 		return this;
 	}
 	
-	public void assertVertexValues(String [] data, IVertex<?>[] vs) {
-		assertEquals (data.length , vs.length);
-		for (int i = 0; i < vs.length; i++) {
-			assertEquals(new Vertex<String>(data[i]), vs[i]);
+	public void assertVertexValues(String [] expected,  String[] actual) {
+		assertEquals (expected.length , actual.length);
+		for (int i = 0; i < actual.length; i++) {
+			assertEquals(expected[i], actual[i]);
 		}
 		
-		for( String s : data) {
+		for( String s : expected) {
 			assertTrue ( graph.hasVertex(s));
 		}
 	}
 
-	protected static abstract class VertexAdapter<D, E extends IEdge<IVertex<D>>> implements VertextListener<D, E> {
+	protected static abstract class VertexAdapter<D, E extends IEdge<D>> implements VertextListener<D, E> {
 		@Override
-		public void vertexAdded(IVertex<D> vertex, Graph<D, E> graph) {}
+		public void vertexAdded(D vertex, Graph<D, E> graph) {}
 
 		@Override
-		public void vertexRemoved(IVertex<D> vertex, Graph<D, E> graph) {}
+		public void vertexRemoved(D vertex, Graph<D, E> graph) {}
 
 		@Override
-		public void vertexUpdated(IVertex<D> vertex, Graph<D, E> graph) {}
+		public void vertexUpdated(D vertex, Graph<D, E> graph) {}
 	}
 	
-	protected static class EdgeAdaptor<D, V extends IVertex<D>> implements EdgeListener<D, V>{
+	protected static class EdgeAdaptor<D> implements EdgeListener<D>{
 
 		@Override
-		public void edgeCreated(IEdge<V> edge) {}
+		public void edgeCreated(IEdge<D> edge) {}
 
 		@Override
-		public void edgeRemoved(IEdge<V> edge) {}
+		public void edgeRemoved(IEdge<D> edge) {}
 
 		@Override
-		public void edgeChanged(IEdge<V> edge, double oldWeight) {}
+		public void edgeChanged(IEdge<D> edge, double oldWeight) {}
 		
 	}
 

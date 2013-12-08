@@ -1,6 +1,7 @@
 package graph;
 
 import static org.junit.Assert.*;
+import graph.model.DefaultEdge;
 import graph.model.EdgeException;
 import graph.model.IEdge.EdgeType;
 
@@ -8,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Test_Undirected_Graph extends TestGraph {
+public class Test_Undirected_Graph extends TestGraph<DefaultEdge<String>> {
 
 	@Before
 	public void setUp() throws Exception {

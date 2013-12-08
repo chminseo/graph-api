@@ -2,26 +2,26 @@ package graph.model;
 
 import java.lang.reflect.Array;
 
-public class DefaultEdge<V extends IVertex<?>> implements IEdge<V> {
+public class DefaultEdge<D> implements IEdge<D> {
 	
 	public double weight ;
 	
 
-	private V [] vs ; // = new Object[2];
+	private D [] vs ; // = new Object[2];
 	
 	@SuppressWarnings("unchecked")
-	public DefaultEdge(V start, V end, double weight) {
-		vs = (V[]) Array.newInstance(start.getClass(), 2);
+	public DefaultEdge(D start, D end, double weight) {
+		vs = (D[]) Array.newInstance(start.getClass(), 2);
 		vs[0] = start;
 		vs[1] = end;
 		this.weight = weight;
 	}
 	
-	public V[] vertex() {
+	public D[] vertex() {
 		return vs.clone();
 	}
 	
-	public DefaultEdge(V s, V e) {
+	public DefaultEdge(D s, D e) {
 		this(s, e, 0.0);
 	}
 	
@@ -34,10 +34,10 @@ public class DefaultEdge<V extends IVertex<?>> implements IEdge<V> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public V [] getVertexes() {
-		V [] cloned = (V[]) Array.newInstance( vs[0].getClass(), 2);
+	public D [] getVertexes() {
+		D [] cloned = (D[]) Array.newInstance( vs[0].getClass(), 2);
 		cloned[0] = vs[0];
 		cloned[1] = vs[1];
-		return (V[]) cloned;
+		return (D[]) cloned;
 	}
 }

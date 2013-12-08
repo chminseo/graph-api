@@ -7,20 +7,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import graph.model.DefaultEdge;
+import graph.model.IDirectedEdge;
 import graph.model.IEdge;
 import graph.model.EdgeException;
 import graph.model.IEdge.EdgeType;
 import graph.model.VertexException;
-import graph.model.Vertex;
-import graph.model.IVertex;
 
-public class Graph <D, E extends IEdge<IVertex<D>>> {
+public class Graph <D, E extends IEdge<D>> {
 
 	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
 		
-	private WeakHashMap<IEdge<? extends IVertex<D>>, IEdge<? extends IVertex<D>>> 
-		cachedEdge = new WeakHashMap<IEdge<? extends IVertex<D>>, IEdge<? extends IVertex<D>>>();
+	private WeakHashMap<IEdge<D>, IEdge<D>> 
+		cachedEdge = new WeakHashMap<IEdge<D>, IEdge<D>>();
 	
 	final private HashSet<DoubleMatrix> mxSet = new HashSet<DoubleMatrix>();
 	
@@ -29,19 +27,19 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 	private GraphType<D, E> gType ;
 	
 	private ArrayList<VertextListener<D, E>> vListeners = new ArrayList<VertextListener<D, E>>();
-	private ArrayList<EdgeListener<D, IVertex<D>>> eListeners = new ArrayList<EdgeListener<D,IVertex<D>>>();
+	private ArrayList<EdgeListener<D>> eListeners = new ArrayList<EdgeListener<D>>();
 	
 	private Graph (int ox, int oy) {
 		
 	}
 	
-	static <D, E extends DirectedEdge<IVertex<D>>> Graph<D, E> newDirectedType () {
+	static <D, E extends IDirectedEdge<D>> Graph<D, E> newDirectedType () {
 		Graph<D, E> mx = new Graph<D, E>(0,0);
 		mx.gType = new DirectedGraph<D, E>(mx, mx.vset);
 		return  mx;
 	}
 	
-	static <D, E extends IEdge<IVertex<D>>> Graph<D, E> newUndirectedType() {
+	static <D, E extends IEdge<D>> Graph<D, E> newUndirectedType() {
 		Graph<D, E> mx = new Graph<D, E>(0,0);
 		mx.gType = new UndirectedGraph<D, E>(mx, mx.vset);
 		return mx;
@@ -49,7 +47,7 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 	
 	
 	
-	public <V extends IVertex<D> > boolean hasVertex(V v) {
+	boolean hasVertex(IndexVertex<D> v) {
 		return vset.contains(v);
 	}
 	
@@ -69,76 +67,68 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 		return vset.size();
 	}
 	
-	private <V extends IVertex<D>> void addVertext(V v){
-		// TODO not thread-safe
-		if ( vset.contains(v) ) {
-			throw new DuplicateVertexException(v);
-		}
-		addVertex(v, false);
-	}
+//	private void addVertext(IndexVertex<D> v){
+//		// TODO not thread-safe
+//		if ( vset.contains(v) ) {
+//			throw new DuplicateVertexException(v);
+//		}
+//		addVertex(v, false);
+//	}
 	
-	<V extends IVertex<D>> void addVertex(V v, boolean skipIfExist ) {
+	void addVertex(IndexVertex<D> v ) {
 		if ( hasVertex(v) ) {
-			if ( ! skipIfExist ) {
-				throw new DuplicateVertexException(v);
-			}
-		} else {
-			IndexVertex<D> iv = null ;
-			if ( v instanceof IndexVertex ){
-				iv = (IndexVertex<D>) v;
-			} else {
-				iv = new IndexVertex<D>(v, vset);		
-			}
-			
-			vset.add(iv);
-			
-			notifyVertexAdded(v);
+				throw new DuplicateVertexException("vertex already exists : " + v.toString());
 		}
+		vset.add(v);
+		notifyVertexAdded(v.value);
 	}
 	
-	private <V extends IVertex<D>> void notifyVertexAdded(V v) {
+	private void notifyVertexAdded(D v) {
 		for(VertextListener<D, E> vl : vListeners) {
 			vl.vertexAdded(v, this);
 		}
 	}
 	
-	private <V extends IVertex<D>> void notifyVertexRemoved(V v) {
+	private void notifyVertexRemoved(D v) {
 		
 		for(VertextListener<D, E> vl : vListeners) {
 			vl.vertexRemoved(v, this);
 		}
 	}
 	
-	private <E extends IEdge<IVertex<D>>> void notifyEdgeAdded(E edge) {
-		for(EdgeListener<D, IVertex<D>> e : eListeners ){
+	private void notifyEdgeAdded(E edge) {
+		for(EdgeListener<D> e : eListeners ){
 			e.edgeCreated(edge);
 		}
 	}
 
-	private <E extends IEdge<IVertex<D>>> void notifyEdgeChanged(E edge, double oldWeight ) {
-		for(EdgeListener<D, IVertex<D>> e : eListeners ){
+	private void notifyEdgeChanged(E edge, double oldWeight ) {
+		for(EdgeListener<D> e : eListeners ){
 			e.edgeChanged(edge, oldWeight);
 		}
 	}
 	
-	private <E extends IEdge<IVertex<D>>> void notifyEdgeRemoved(E edge) {
-		for(EdgeListener<D, IVertex<D>> e : eListeners ){
+	private void notifyEdgeRemoved(E edge) {
+		for(EdgeListener<D> e : eListeners ){
 			e.edgeRemoved(edge);
 		}
 	}
 	
-	public IVertex<D> addVertex(D data) {
-		IndexVertex<D> v = new IndexVertex<D>(new Vertex<D>(data), vset);
-		addVertext(v);
-		return v;
+	public D addVertex(D data) {
+		IndexVertex<D> v = new IndexVertex<D>(data, vset);
+		if ( vset.contains(v) ) {
+			throw new DuplicateVertexException("vertex already exists : " + v.toString());
+		}
+		
+		addVertex(v);
+		return data;
 	}
 	
 	/**
 	 * 주어진 데이터에 해당하는 vertex를 제거함.<br/>
 	 * 연결된 edge가 있으면 같이 제거함.
 	 */
-	@SuppressWarnings("unchecked")
-	public IVertex<D> removeVertex(D data) {
+	public D removeVertex(D data) {
 		IndexVertex<D> iv = findVertex(data);
 		if ( iv == null ) {
 			throw new VertexException("no such vertex : " + data);
@@ -146,32 +136,28 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 		
 		List<E> edges = getEdges(data, EdgeType.ANY_EDGE);
 		for( E e : edges ) {
-			IVertex<?> [] vs = e.getVertexes();
-			removeEdge( (D)vs[0].getData(), (D) vs[1].getData() );
+			D [] vs = e.getVertexes();
+			removeEdge( vs[0], vs[1] );
 		}
 		
 		vset.remove(iv);
 		
-		notifyVertexRemoved(iv);
-		return iv.v;
+		notifyVertexRemoved(iv.value);
+		return iv.value;
 	}
 	
-	public <V extends IVertex<D>> V[] listVertice(){
-		@SuppressWarnings("unchecked")
-		V[] vertice = (V[]) Array.newInstance(IVertex.class, vset.size());
-		vset.toArray(vertice);
-		return vertice;
-	}
-	
-	public D[] listVertex() {
-		IVertex<D> [] vs = listVertice();
-		@SuppressWarnings("unchecked")
-		D[] ds = (D[]) new Object[vs.length];
-		for( int i = 0 ; i < vs.length ; i++) {
-			ds[i] = vs[i].getData();
+	@SuppressWarnings("unchecked")
+	public D[] listVertex(){
+		D [] ds = null;
+		if ( vset.size() == 0 ) {
+			ds = (D[] ) vset.toArray();
+		} else {
+			ds = (D[]) Array.newInstance(vset.get(0).value.getClass(), vset.size());
+			for (int i = 0; i < ds.length; i++) {
+				ds[i] = vset.get(i).value;
+			}
 		}
 		return ds;
-		
 	}
 	
 	// ensure the given nodes exist in the list of the vertex.
@@ -185,34 +171,15 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 					break;
 				}
 			}
-			if ( notFound ) {		
+			if ( notFound ) {
 				throw new VertexException(" no such vertext : " + nodes[i]);
 			}
 		}
 	}
-	/*
-	 * 불필요할 수 있어서 가려놓음.
-	 */
-//	public <V extends IVertex<D>> void addEdge(V s, V e, double weight) {
-//		// TODO not thread-safe
-//		if ( !vset.contains(s) ) {
-//			throw new RuntimeException(" no such vertext : " + s);
-//		}
-//		
-//		if ( !vset.contains(e)) {
-//			throw new RuntimeException(" no such vertext : " + e);
-//		}
-//		
-//		int r = vset.indexOf(s);
-//		int c = vset.indexOf(e);
-//				
-//		setWeight(r, c, weight);
-//	}
-	
-	@SuppressWarnings("unchecked")
-	public IEdge<IVertex<D>> removeEdge(D s, D e ) {
+
+	public E removeEdge(D s, D e ) {
 		ensureVertice(s, e);
-		IEdge<IVertex<D>> edge = gType.removeEdge(s, e);
+		E edge = gType.removeEdge(s, e);
 		
 		notifyEdgeRemoved(edge);
 		
@@ -229,7 +196,7 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 		}
 		double currentWeight = weight(s, e);
 		
-		IEdge<IVertex<D>> newEdge = gType.setEdge(s, e, w);
+		E newEdge = gType.setEdge(s, e, w);
 		
 		if ( currentWeight >= 0) {
 			notifyEdgeChanged(newEdge, currentWeight);
@@ -248,7 +215,7 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 	}
 	
 	
-	public IEdge<IVertex<D>> getEdge(D s, D e) {
+	public E getEdge(D s, D e) {
 		return gType.getEdge(s, e);
 	}
 	
@@ -257,7 +224,7 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 	}
 	
 	private E asEdge(GraphType<D, E> graph, int from, int to, double weight ) {
-		return graph.newEdge(vset.get(from), vset.get(to), weight);
+		return graph.newEdge(vset.get(from).getData(), vset.get(to).getData(), weight);
 //		return (E) new DefaultEdge<IVertex<?>>(vset.get(from), vset.get(to), weight );
 	}
 	
@@ -365,7 +332,7 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 		vListeners.remove(listener);
 	}
 	
-	public void addEdgeListener(EdgeListener<D, IVertex<D>> listener) {
+	public void addEdgeListener(EdgeListener<D> listener) {
 		if ( !eListeners.contains(listener)) {
 			eListeners.add(listener);
 		}
@@ -386,11 +353,11 @@ public class Graph <D, E extends IEdge<IVertex<D>>> {
 		throw new VertexException("no such vertex : " + s);
 	}
 	
-	abstract static class GraphType<D, E extends IEdge<IVertex<D>>> {
+	abstract static class GraphType<D, E extends IEdge<D>> {
 		public abstract E setEdge(D s, D e, double weight);
 		public abstract E removeEdge(D s, D e);
 		public abstract E getEdge(D s, D e );
 		public abstract List<E> getEdges(D s, EdgeType eType);
-		public abstract E newEdge(IVertex<D> s, IVertex<D> e, double weight);
+		public abstract E newEdge(D s, D e, double weight);
 	}
 }

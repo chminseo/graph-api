@@ -1,8 +1,7 @@
 package graph;
 
 import graph.model.EdgeException;
-import graph.model.IVertex;
-import graph.model.Vertex;
+import graph.model.IDirectedEdge;
 import graph.model.VertexException;
 import graph.model.IEdge.EdgeType;
 
@@ -10,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-class DirectedGraph<D, E extends DirectedEdge<IVertex<D>>> extends Graph.GraphType<D, E>{
+class DirectedGraph<D, E extends IDirectedEdge<D>> extends Graph.GraphType<D, E>{
 
 		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D,E> graphFacade ;
+		final Graph<D, E> graphFacade ;
 		public DirectedGraph(Graph<D, E> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
 			this.graphFacade = mx;
@@ -22,17 +21,13 @@ class DirectedGraph<D, E extends DirectedEdge<IVertex<D>>> extends Graph.GraphTy
 		@Override
 		public E setEdge(D s, D e, double weight) {
 			
-			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
-			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
+			IndexVertex<D> vs = new IndexVertex<D>(s, vset);
+			IndexVertex<D> ve = new IndexVertex<D>(e, vset);
 			
-			graphFacade.addVertex(vs, true);
-			graphFacade.addVertex(ve, true);
-			
-//			DefaultEdge<IVertex<D>, W> edge = 
-//					new DefaultEdge<IVertex<D>, W>(vs, ve, w);
 			graphFacade.setWeight(vs.index(), ve.index(), weight);
 			
-			return (E) new DirectedEdge<IVertex<D>> (vs, ve, weight);
+			return newEdge(s, e, weight);
+			
 		}
 		
 		public E removeEdge(D s, D e) {
@@ -42,7 +37,7 @@ class DirectedGraph<D, E extends DirectedEdge<IVertex<D>>> extends Graph.GraphTy
 			
 			graphFacade.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
 			
-			return (E) new DirectedEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
+			return newEdge(s, e, DoubleMatrix.INF_WEIGHT);
 		}
 		
 		@Override
@@ -107,18 +102,18 @@ class DirectedGraph<D, E extends DirectedEdge<IVertex<D>>> extends Graph.GraphTy
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);
 			}
 			
-			DirectedEdge<IVertex<D>> edge ;
+			E edge ;
 			
-			edge = new DirectedEdge<IVertex<D>>(vs, ve, weight);
+			edge = newEdge(s, e, weight);
 			
 //			cachedEdge.put(edge, edge);
 			
-			return (E) edge;
+			return edge;
 		}
 
 		@Override
-		public E newEdge(IVertex<D> s, IVertex<D> e, double weight) {
+		public E newEdge(D s, D e, double weight) {
 			// TEST created and not tested method stub
-			return (E) new DirectedEdge<IVertex<D>>(s, e, weight);
+			return (E) new DirectedEdge<D>(s, e, weight);
 		}
 	}

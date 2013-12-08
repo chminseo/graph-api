@@ -1,13 +1,12 @@
 package graph;
 
 import static org.junit.Assert.*;
-import graph.model.IVertex;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Test_VertexListener extends TestGraph {
+public class Test_VertexListener extends TestGraph<DirectedEdge<String>> {
 
 	String [] vs = new String[]{"listening A", "listening B", "not listening X"};
 	
@@ -40,12 +39,12 @@ public class Test_VertexListener extends TestGraph {
 		
 	}
 	
-	static class Listener_to_be_called extends VertexAdapter<String, DirectedEdge<IVertex<String>>> {
+	static class Listener_to_be_called extends VertexAdapter<String, DirectedEdge<String>> {
 		String [] received = new String[2];
 		int idx = 0;
 		@Override
-		public void vertexAdded(IVertex<String> vertex, Graph<String, DirectedEdge<IVertex<String>>> graph) {
-			received[idx++] = vertex.getData();
+		public void vertexAdded(String vertex, Graph<String, DirectedEdge<String>> graph) {
+			received[idx++] = vertex;
 		}
 		
 	};
@@ -63,13 +62,13 @@ public class Test_VertexListener extends TestGraph {
 		
 		graph.removeVertex("A"); // not listening
 		
-		assertEquals ("B", listener.v.getData());
+		assertEquals ("B", listener.v);
 	}
 	
-	static class When_vertex_removed extends VertexAdapter<String, DirectedEdge<IVertex<String>>>{
-		IVertex<String> v;
+	static class When_vertex_removed extends VertexAdapter<String, DirectedEdge<String>>{
+		String v;
 		@Override
-		public void vertexRemoved(IVertex<String> vertex, Graph<String, DirectedEdge<IVertex<String>>> graph) {
+		public void vertexRemoved(String vertex, Graph<String, DirectedEdge<String>> graph) {
 			v = vertex;
 		}
 	}

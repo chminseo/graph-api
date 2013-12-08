@@ -1,7 +1,6 @@
 package graph;
 
 import static org.junit.Assert.*;
-import graph.model.IVertex;
 import graph.op.ShortestPath;
 
 import org.junit.After;
@@ -19,7 +18,7 @@ import org.junit.Test;
  * @author chminseo
  *
  */
-public class Test_ShortestPath extends TestGraph {
+public class Test_ShortestPath extends TestGraph<DirectedEdge<String>> {
 
 	@Before
 	public void setUp() throws Exception {

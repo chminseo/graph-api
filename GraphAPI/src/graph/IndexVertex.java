@@ -1,15 +1,14 @@
 package graph;
 
-import graph.model.IVertex;
-
+import java.util.ArrayList;
 import java.util.List;
 
-class IndexVertex<D> implements IVertex<D> {
+class IndexVertex<D> {
 
-	private List<? extends IVertex<D>> list ;
-	IVertex<D> v ;
-	public IndexVertex(IVertex<D> v, List<? extends IVertex<D>> list) {
-		this.v = v;
+	private List<IndexVertex<D>> list ;
+	D value ;
+	public IndexVertex(D v, ArrayList<IndexVertex<D>> list) {
+		this.value = v;
 		this.list = list;
 	}
 	
@@ -17,23 +16,30 @@ class IndexVertex<D> implements IVertex<D> {
 		return list.indexOf(this);
 	}
 
-	@Override
 	public D getData() {
-		return v.getData();
+		return value;
 	}
 
 	@Override
 	public int hashCode() {
-		return v.hashCode();
+		return value.hashCode()*31 + index();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return this.v.equals(obj);
+		
+		if ( obj instanceof IndexVertex) {
+			return this.value.equals ( ((IndexVertex<D>)obj).value );
+		}
+		return false;
+	}
+	
+	public boolean equalsValue(D value) {
+		return this.value.equals(value);
 	}
 
 	@Override
 	public String toString() {
-		return "[iv : " + v.toString() + " at " + list.indexOf(this) + "]";
+		return "[iv : " + value.toString() + " at " + list.indexOf(this) + "]";
 	}
 }

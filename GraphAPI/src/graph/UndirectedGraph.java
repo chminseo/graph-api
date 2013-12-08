@@ -3,7 +3,6 @@ package graph;
 import graph.model.DefaultEdge;
 import graph.model.EdgeException;
 import graph.model.IEdge;
-import graph.model.IVertex;
 import graph.model.VertexException;
 import graph.model.IEdge.EdgeType;
 
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-class UndirectedGraph<D, E extends IEdge<IVertex<D>>> extends Graph.GraphType<D, E> {
+class UndirectedGraph<D, E extends IEdge<D>> extends Graph.GraphType<D, E> {
 		final private ArrayList<IndexVertex<D>> vset ;
 		final Graph<D, E> graphFacade ;
 		
@@ -26,9 +25,6 @@ class UndirectedGraph<D, E extends IEdge<IVertex<D>>> extends Graph.GraphType<D,
 			IndexVertex<D> vs = graphFacade.findVertex(s);
 			IndexVertex<D> ve = graphFacade.findVertex(e);
 			
-			graphFacade.addVertex(vs, true);
-			graphFacade.addVertex(ve, true);
-			
 			int is = vs.index();
 			int ie = ve.index();
 			
@@ -39,7 +35,7 @@ class UndirectedGraph<D, E extends IEdge<IVertex<D>>> extends Graph.GraphType<D,
 			}
 			
 			graphFacade.setWeight(vs.index(), ve.index(), weight);
-			return (E) new DefaultEdge<IVertex<D>> (vs, ve, weight);
+			return newEdge(vs.getData(), ve.getData(), weight);
 			
 		}
 		
@@ -58,7 +54,7 @@ class UndirectedGraph<D, E extends IEdge<IVertex<D>>> extends Graph.GraphType<D,
 			
 			graphFacade.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
 			
-			return (E) new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
+			return newEdge(vs.value, ve.value, DoubleMatrix.INF_WEIGHT);
 		}
 		public List<E> getEdges(D s, EdgeType eType) {
 			IndexVertex<D> vs = null;
@@ -127,15 +123,16 @@ class UndirectedGraph<D, E extends IEdge<IVertex<D>>> extends Graph.GraphType<D,
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);
 			}
 			
-			DefaultEdge<IVertex<D>> edge = new DefaultEdge<IVertex<D>>(vs, ve, weight);
+			DefaultEdge<D> edge = new DefaultEdge<D>(vs.getData(), ve.getData(), weight);
 //			cachedEdge.put(edge, edge);
 			
 			return (E) edge;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public E newEdge(IVertex<D> vs, IVertex<D> ve, double weight) {
-			return (E) new DefaultEdge<IVertex<D>> (vs, ve, weight);
+		public E newEdge(D s, D e, double weight) {
+			return (E) new DefaultEdge<D> (s, e, weight);
 		}
 		
 	}
