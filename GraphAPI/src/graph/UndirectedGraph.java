@@ -1,10 +1,10 @@
 package graph;
 
+import graph.model.EdgeType;
 import graph.model.UndirectedEdge;
 import graph.model.EdgeException;
 import graph.model.IUndirectedEdge;
 import graph.model.VertexException;
-import graph.model.IUndirectedEdge.EdgeType;
 
 import java.util.ArrayList;
 import java.util.Iterator;

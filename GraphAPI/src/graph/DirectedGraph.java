@@ -2,9 +2,9 @@ package graph;
 
 import graph.model.DirectedEdge;
 import graph.model.EdgeException;
+import graph.model.EdgeType;
 import graph.model.IDirectedEdge;
 import graph.model.VertexException;
-import graph.model.IUndirectedEdge.EdgeType;
 
 import java.util.ArrayList;
 import java.util.Iterator;

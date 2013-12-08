@@ -7,10 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import graph.model.EdgeType;
 import graph.model.IDirectedEdge;
 import graph.model.IUndirectedEdge;
 import graph.model.EdgeException;
-import graph.model.IUndirectedEdge.EdgeType;
 import graph.model.VertexException;
 
 public class Graph <D, E extends IUndirectedEdge<D>> {
