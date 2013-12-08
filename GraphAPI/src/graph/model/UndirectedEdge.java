@@ -21,12 +21,6 @@ public class UndirectedEdge<D> implements IUndirectedEdge<D> {
 		return vs.clone();
 	}
 	
-	public UndirectedEdge(D s, D e) {
-		this(s, e, 0.0);
-	}
-	
-	
-
 	@Override
 	public double getWeight() {
 		return weight;
