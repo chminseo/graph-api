@@ -74,7 +74,6 @@ public class ShortestPath<D> {
 
 	
 	private int choose( double [] distance, boolean[] found) {
-		// TEST created and not tested method stub
 		double min = Double.MAX_VALUE ;
 		int minpos = -1;
 		
