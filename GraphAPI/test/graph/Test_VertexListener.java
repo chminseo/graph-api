@@ -40,11 +40,11 @@ public class Test_VertexListener extends TestGraph {
 		
 	}
 	
-	static class Listener_to_be_called extends VertexAdapter<String> {
+	static class Listener_to_be_called extends VertexAdapter<String, DirectedEdge<IVertex<String>>> {
 		String [] received = new String[2];
 		int idx = 0;
 		@Override
-		public void vertexAdded(IVertex<String> vertex, Graph<String> graph) {
+		public void vertexAdded(IVertex<String> vertex, Graph<String, DirectedEdge<IVertex<String>>> graph) {
 			received[idx++] = vertex.getData();
 		}
 		
@@ -66,10 +66,10 @@ public class Test_VertexListener extends TestGraph {
 		assertEquals ("B", listener.v.getData());
 	}
 	
-	static class When_vertex_removed extends VertexAdapter<String>{
+	static class When_vertex_removed extends VertexAdapter<String, DirectedEdge<IVertex<String>>>{
 		IVertex<String> v;
 		@Override
-		public void vertexRemoved(IVertex<String> vertex, Graph<String> graph) {
+		public void vertexRemoved(IVertex<String> vertex, Graph<String, DirectedEdge<IVertex<String>>> graph) {
 			v = vertex;
 		}
 	}

@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-class UndirectedGraph<D> extends Graph.GraphType<D> {
+class UndirectedGraph<D, E extends IEdge<IVertex<D>>> extends Graph.GraphType<D, E> {
 		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D> graphFacade ;
+		final Graph<D, E> graphFacade ;
 		
-		public UndirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
+		public UndirectedGraph(Graph<D, E> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
 			this.graphFacade = mx;
 		}
 
 		@Override
-		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
+		public E setEdge(D s, D e, double weight) {
 			
 			IndexVertex<D> vs = graphFacade.findVertex(s);
 			IndexVertex<D> ve = graphFacade.findVertex(e);
@@ -39,11 +39,11 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 			}
 			
 			graphFacade.setWeight(vs.index(), ve.index(), weight);
-			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
+			return (E) new DefaultEdge<IVertex<D>> (vs, ve, weight);
 			
 		}
 		
-		public IEdge<IVertex<D>> removeEdge(D s, D e) {
+		public E removeEdge(D s, D e) {
 			IndexVertex<D> vs = graphFacade.findVertex(s);
 			IndexVertex<D> ve = graphFacade.findVertex(e);
 			
@@ -58,9 +58,9 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 			
 			graphFacade.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
 			
-			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
+			return (E) new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
 		}
-		public List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType) {
+		public List<E> getEdges(D s, EdgeType eType) {
 			IndexVertex<D> vs = null;
 			Iterator<IndexVertex<D>> it = vset.iterator();
 			
@@ -76,11 +76,12 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 				throw new VertexException("can not find vertex s : " + s);
 			}
 			
-			return graphFacade.listWeights(vs, EdgeType.ANY_EDGE);
+			List<E> list = graphFacade.listWeights(vs, EdgeType.ANY_EDGE);
+			return list;
 		};
 
 		@Override
-		public IEdge<IVertex<D>> getEdge(D s, D e) {
+		public E getEdge(D s, D e) {
 			IndexVertex<D> vs = null ;
 			IndexVertex<D> ve = null ;
 			double weight = -1;
@@ -129,7 +130,12 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 			DefaultEdge<IVertex<D>> edge = new DefaultEdge<IVertex<D>>(vs, ve, weight);
 //			cachedEdge.put(edge, edge);
 			
-			return edge;
+			return (E) edge;
+		}
+
+		@Override
+		public E newEdge(IVertex<D> vs, IVertex<D> ve, double weight) {
+			return (E) new DefaultEdge<IVertex<D>> (vs, ve, weight);
 		}
 		
 	}

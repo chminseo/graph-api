@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class TestGraph {
 
-	Graph<String> graph ;
+	Graph<String, DirectedEdge<IVertex<String>>> graph ;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -19,11 +19,11 @@ public class TestGraph {
 	}
 	
 	protected void installDirectedGraph(){
-		graph = Graphs.<String>newDirectedGraph();
+		graph = Graphs.<String, DirectedEdge<IVertex<String>>>newDirectedGraph();
 	}
 	
 	protected void installUndirectedGraph() {
-		graph = Graphs.<String>newUndirectedGraph();
+		graph = Graphs.<String, DirectedEdge<IVertex<String>>>newUndirectedGraph();
 	}
 	
 	protected void installVertexes() {
@@ -82,15 +82,15 @@ public class TestGraph {
 		}
 	}
 
-	protected static abstract class VertexAdapter<D> implements VertextListener<D> {
+	protected static abstract class VertexAdapter<D, E extends IEdge<IVertex<D>>> implements VertextListener<D, E> {
 		@Override
-		public void vertexAdded(IVertex<D> vertex, Graph<D> graph) {}
+		public void vertexAdded(IVertex<D> vertex, Graph<D, E> graph) {}
 
 		@Override
-		public void vertexRemoved(IVertex<D> vertex, Graph<D> graph) {}
+		public void vertexRemoved(IVertex<D> vertex, Graph<D, E> graph) {}
 
 		@Override
-		public void vertexUpdated(IVertex<D> vertex, Graph<D> graph) {}
+		public void vertexUpdated(IVertex<D> vertex, Graph<D, E> graph) {}
 	}
 	
 	protected static class EdgeAdaptor<D, V extends IVertex<D>> implements EdgeListener<D, V>{

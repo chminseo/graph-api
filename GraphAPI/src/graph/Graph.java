@@ -15,7 +15,7 @@ import graph.model.VertexException;
 import graph.model.Vertex;
 import graph.model.IVertex;
 
-public class Graph <D> {
+public class Graph <D, E extends IEdge<IVertex<D>>> {
 
 	final private ArrayList<IndexVertex<D>> vset = new ArrayList<IndexVertex<D>>();
 		
@@ -26,24 +26,24 @@ public class Graph <D> {
 	
 	private int base = 2;
 	
-	private GraphType<D> gType ;
+	private GraphType<D, E> gType ;
 	
-	private ArrayList<VertextListener<D>> vListeners = new ArrayList<VertextListener<D>>();
+	private ArrayList<VertextListener<D, E>> vListeners = new ArrayList<VertextListener<D, E>>();
 	private ArrayList<EdgeListener<D, IVertex<D>>> eListeners = new ArrayList<EdgeListener<D,IVertex<D>>>();
 	
 	private Graph (int ox, int oy) {
 		
 	}
 	
-	static <D> Graph<D> newDirectedType () {
-		Graph<D> mx = new Graph<D>(0,0);
-		mx.gType = new DirectedGraph<D>(mx, mx.vset);
+	static <D, E extends DirectedEdge<IVertex<D>>> Graph<D, E> newDirectedType () {
+		Graph<D, E> mx = new Graph<D, E>(0,0);
+		mx.gType = new DirectedGraph<D, E>(mx, mx.vset);
 		return  mx;
 	}
 	
-	static <D> Graph<D> newUndirectedType() {
-		Graph<D> mx = new Graph<D>(0,0);
-		mx.gType = new UndirectedGraph<D>(mx, mx.vset);
+	static <D, E extends IEdge<IVertex<D>>> Graph<D, E> newUndirectedType() {
+		Graph<D, E> mx = new Graph<D, E>(0,0);
+		mx.gType = new UndirectedGraph<D, E>(mx, mx.vset);
 		return mx;
 	}
 	
@@ -97,14 +97,14 @@ public class Graph <D> {
 	}
 	
 	private <V extends IVertex<D>> void notifyVertexAdded(V v) {
-		for(VertextListener<D> vl : vListeners) {
+		for(VertextListener<D, E> vl : vListeners) {
 			vl.vertexAdded(v, this);
 		}
 	}
 	
 	private <V extends IVertex<D>> void notifyVertexRemoved(V v) {
 		
-		for(VertextListener<D> vl : vListeners) {
+		for(VertextListener<D, E> vl : vListeners) {
 			vl.vertexRemoved(v, this);
 		}
 	}
@@ -144,8 +144,8 @@ public class Graph <D> {
 			throw new VertexException("no such vertex : " + data);
 		}
 		
-		List<IEdge<IVertex<?>>> edges = getEdges(data, EdgeType.ANY_EDGE);
-		for( IEdge<IVertex<?>> e : edges ) {
+		List<E> edges = getEdges(data, EdgeType.ANY_EDGE);
+		for( E e : edges ) {
 			IVertex<?> [] vs = e.getVertexes();
 			removeEdge( (D)vs[0].getData(), (D) vs[1].getData() );
 		}
@@ -219,7 +219,7 @@ public class Graph <D> {
 		return edge;
 	}
 	
-	public List<IEdge<IVertex<?>>> getEdges(D vertexData, EdgeType etype ) {
+	public List<E> getEdges(D vertexData, EdgeType etype ) {
 		return gType.getEdges(vertexData, etype );	
 	}
 	
@@ -256,11 +256,12 @@ public class Graph <D> {
 		return getMatrix(r, c).getValue(r, c);
 	}
 	
-	private IEdge<IVertex<?>> asEdge(int from, int to, double weight ) {
-		return new DefaultEdge<IVertex<?>>(vset.get(from), vset.get(to), weight );
+	private E asEdge(GraphType<D, E> graph, int from, int to, double weight ) {
+		return graph.newEdge(vset.get(from), vset.get(to), weight);
+//		return (E) new DefaultEdge<IVertex<?>>(vset.get(from), vset.get(to), weight );
 	}
 	
-	List<IEdge<IVertex<?>>> listWeights(IndexVertex<D> vs, EdgeType e) {
+	List<E> listWeights(IndexVertex<D> vs, EdgeType e) {
 		
 		Iterator<DoubleMatrix> it = mxSet.iterator();
 		
@@ -269,7 +270,7 @@ public class Graph <D> {
 		int r, c;
 		r = c = vs.index();
 		
-		ArrayList<IEdge<IVertex<?>>> edges = new ArrayList<IEdge<IVertex<?>>>();
+		ArrayList<E> edges = new ArrayList<E>();
 		
 		while ( it.hasNext()) {
 			mx = it.next();
@@ -279,7 +280,7 @@ public class Graph <D> {
 				weights = mx.getWeightsFrom(r);
 				for( int col = 0; col < weights.length ; col++) {
 					if ( weights[col] > 0 ) {
-						edges.add(asEdge(r, mx.oy + col, weights[col]) );
+						edges.add(asEdge(gType, r, mx.oy + col, weights[col]) );
 					}
 				}
 			}
@@ -289,7 +290,7 @@ public class Graph <D> {
 				weights = mx.getWeightsTo(c);
 				for( int row = 0; row < weights.length ; row ++) {
 					if ( weights[row] > 0 ) {
-						edges.add(asEdge(row + mx.ox , c, weights[row]) );
+						edges.add(asEdge(gType, row + mx.ox , c, weights[row]) );
 					}
 				}
 			}
@@ -354,13 +355,13 @@ public class Graph <D> {
 		
 	}
 	
-	public void addVertexListener(VertextListener<D> listener) {
+	public void addVertexListener(VertextListener<D, E> listener) {
 		if ( ! vListeners.contains(listener) ) {
 			vListeners.add(listener);
 		}
 	}
 	
-	public void removeVertexListener(VertextListener<D> listener) {
+	public void removeVertexListener(VertextListener<D, E> listener) {
 		vListeners.remove(listener);
 	}
 	
@@ -370,7 +371,7 @@ public class Graph <D> {
 		}
 	}
 	
-	public void removeEdgeListener(VertextListener<D> listener) {
+	public void removeEdgeListener(VertextListener<D, E> listener) {
 		vListeners.remove(listener);
 	}
 	
@@ -385,10 +386,11 @@ public class Graph <D> {
 		throw new VertexException("no such vertex : " + s);
 	}
 	
-	abstract static class GraphType<D> {
-		public abstract IEdge<IVertex<D>> setEdge(D s, D e, double weight);
-		public abstract IEdge<IVertex<D>> removeEdge(D s, D e);
-		public abstract IEdge<IVertex<D>> getEdge(D s, D e );
-		public abstract List<IEdge<IVertex<?>>> getEdges(D s, EdgeType eType);
+	abstract static class GraphType<D, E extends IEdge<IVertex<D>>> {
+		public abstract E setEdge(D s, D e, double weight);
+		public abstract E removeEdge(D s, D e);
+		public abstract E getEdge(D s, D e );
+		public abstract List<E> getEdges(D s, EdgeType eType);
+		public abstract E newEdge(IVertex<D> s, IVertex<D> e, double weight);
 	}
 }
