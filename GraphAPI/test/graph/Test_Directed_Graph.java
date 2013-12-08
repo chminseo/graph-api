@@ -26,7 +26,7 @@ public class Test_Directed_Graph extends TestGraph{
 	@Test
 	public void test_add_vertext() {
 		
-		vertice(new String[]{"Incheon", "Seoul", "Busan", "Suwon"});
+		vertexes("Incheon", "Seoul", "Busan", "Suwon");
 		graph.setEdge("Seoul", "Busan", 233);
 		
 		check_list(
@@ -51,7 +51,7 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void test_weight_of_edge() {
-		vertice(new String[]{"A", "B", "E", "I", "J", "K" });
+		vertexes("A", "B", "E", "I", "J", "K");
 		
 		graph.setEdge("A", "E", 24);
 		graph.setEdge("B", "K", 11);
@@ -70,7 +70,7 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void asymmetry_edge_in_directed_graph () {
-		vertice(new String[]{"A", "B", "C", "D", "E"});		
+		vertexes("A", "B", "C", "D", "E");		
 		assertNoEdge("A", "E");
 		
 		graph.setEdge("A", "E", 24);
@@ -90,7 +90,7 @@ public class Test_Directed_Graph extends TestGraph{
 	 */
 	@Test
 	public void test_get_edges_from_the_vertex() {
-		vertice(new String[]{"A", "B", "C"});
+		vertexes("A", "B", "C");
 		edge("A", "B", 10);
 		edge("A", "C", 20);
 		edge("B", "C", 30);
@@ -106,14 +106,14 @@ public class Test_Directed_Graph extends TestGraph{
 	
 	@Test
 	public void weight_of_the_same_vertex_should_be_zero () {
-		vertice(new String[]{"A", "B"});
+		vertexes("A", "B");
 		
 		assertEquals (0, graph.weight("A", "A"), 0.1 );
 	}
 	
 	@Test
 	public void removal_of_vertex() {
-		vertice(new String[]{"A", "B", "C", "D"});
+		vertexes("A", "B", "C", "D");
 		
 		edge("A", "B", 13).edge("A", "C", 7).edge("A", "D", 5)
 			.edge("B", "C", 11);
@@ -146,7 +146,7 @@ public class Test_Directed_Graph extends TestGraph{
 	 */
 	@Test
 	public void removal_of_edge_between_vertice() {
-		vertice(new String[]{"A", "B", "C", "D"});
+		vertexes("A", "B", "C", "D");
 		edge("A", "B", 10).edge("A", "C", 20);
 		edge("B", "C", 30).edge("B", "D",  6);
 		edge("C", "D", 12).edge("D", "A", 33);

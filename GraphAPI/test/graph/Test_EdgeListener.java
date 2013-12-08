@@ -25,7 +25,7 @@ public class Test_EdgeListener extends TestGraph {
 	public void listener_registration() {
 		EdgeListenerImpl listener = new EdgeListenerImpl();
 		
-		vertice(new String[]{"A", "B", "C"});
+		vertexes(new String[]{"A", "B", "C"});
 		
 		graph.addEdgeListener(listener);
 		

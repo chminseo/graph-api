@@ -22,7 +22,7 @@ public class Test_Undirected_Graph extends TestGraph {
 	@Test
 	public void symmetry_edge_in_undirectedGraph() {
 		
-		vertice(new String []{"A", "B", "C", "D", "E" });
+		vertexes("A", "B", "C", "D", "E");
 		
 		graph.setEdge("A", "D", 12);
 		assertEquals (12.0, graph.getEdge("D", "A").getWeight(), 0.1);
@@ -41,7 +41,7 @@ public class Test_Undirected_Graph extends TestGraph {
 	 */
 	@Test
 	public void test_get_edges_from_the_vertex() {
-		vertice(new String[]{"A", "B", "C"});
+		vertexes("A", "B", "C");
 		edge("A", "B", 10);
 		edge("A", "C", 20);
 		edge("C", "B", 30);
@@ -58,7 +58,7 @@ public class Test_Undirected_Graph extends TestGraph {
 	
 	@Test
 	public void removal_of_edge_between_vertice() {
-		vertice(new String[]{"A", "B", "C"});
+		vertexes("A", "B", "C");
 		edge("A", "B", 10).edge("A", "C", 20).edge("C", "B", 30);
 		
 		graph.getEdge("A", "B");

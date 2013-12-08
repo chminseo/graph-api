@@ -38,7 +38,7 @@ public class TestGraph {
 	 * installing vertice
 	 * @param ao
 	 */
-	void vertice(String [] ao) {
+	void vertexes(String... ao) {
 		for(String s : ao) {
 			graph.addVertex(s);
 		}
