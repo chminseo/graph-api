@@ -2,15 +2,15 @@ package graph.model;
 
 import java.lang.reflect.Array;
 
-public class DefaultEdge<D> implements IEdge<D> {
+public class UndirectedEdge<D> implements IEdge<D> {
 	
 	public double weight ;
 	
 
-	private D [] vs ; // = new Object[2];
+	protected D [] vs ; // = new Object[2];
 	
 	@SuppressWarnings("unchecked")
-	public DefaultEdge(D start, D end, double weight) {
+	public UndirectedEdge(D start, D end, double weight) {
 		vs = (D[]) Array.newInstance(start.getClass(), 2);
 		vs[0] = start;
 		vs[1] = end;
@@ -21,7 +21,7 @@ public class DefaultEdge<D> implements IEdge<D> {
 		return vs.clone();
 	}
 	
-	public DefaultEdge(D s, D e) {
+	public UndirectedEdge(D s, D e) {
 		this(s, e, 0.0);
 	}
 	
