@@ -15,10 +15,10 @@ import java.util.List;
 class DirectedGraph<D> extends Graph.GraphType<D>{
 
 		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D> mx ;
+		final Graph<D> graphFacade ;
 		public DirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
-			this.mx = mx;
+			this.graphFacade = mx;
 		}
 		
 		@Override
@@ -26,23 +26,23 @@ class DirectedGraph<D> extends Graph.GraphType<D>{
 			IndexVertex<D> vs = new IndexVertex<D>(new Vertex<D>(s), vset);
 			IndexVertex<D> ve = new IndexVertex<D>(new Vertex<D>(e), vset);
 			
-			mx.addVertex(vs, true);
-			mx.addVertex(ve, true);
+			graphFacade.addVertex(vs, true);
+			graphFacade.addVertex(ve, true);
 			
 //			DefaultEdge<IVertex<D>, W> edge = 
 //					new DefaultEdge<IVertex<D>, W>(vs, ve, w);
 			
-			mx.setWeight(vs.index(), ve.index(), weight);
+			graphFacade.setWeight(vs.index(), ve.index(), weight);
 			
 			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
 		}
 		
 		public IEdge<IVertex<D>> removeEdge(D s, D e) {
 			// TEST 구현해야함.
-			IndexVertex<D> vs = mx.findVertex(s);
-			IndexVertex<D> ve = mx.findVertex(e);
+			IndexVertex<D> vs = graphFacade.findVertex(s);
+			IndexVertex<D> ve = graphFacade.findVertex(e);
 			
-			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
+			graphFacade.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
 			
 			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
 		}
@@ -64,7 +64,7 @@ class DirectedGraph<D> extends Graph.GraphType<D>{
 				throw new VertexException("can not find vertex s : " + s);
 			}
 			
-			return mx.listWeights(vs, eType);
+			return graphFacade.listWeights(vs, eType);
 			
 			
 		}
@@ -101,7 +101,7 @@ class DirectedGraph<D> extends Graph.GraphType<D>{
 			}
 			
 			
-			weight = mx.getWeight(vs.index(), ve.index());
+			weight = graphFacade.getWeight(vs.index(), ve.index());
 			
 			if ( weight < 0 ) {
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);

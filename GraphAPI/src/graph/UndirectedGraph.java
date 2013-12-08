@@ -13,21 +13,21 @@ import java.util.List;
 
 class UndirectedGraph<D> extends Graph.GraphType<D> {
 		final private ArrayList<IndexVertex<D>> vset ;
-		final Graph<D> mx ;
+		final Graph<D> graphFacade ;
 		
 		public UndirectedGraph(Graph<D> mx, ArrayList<IndexVertex<D>> list) {
 			vset = list;
-			this.mx = mx;
+			this.graphFacade = mx;
 		}
 
 		@Override
 		public IEdge<IVertex<D>> setEdge(D s, D e, double weight) {
 			
-			IndexVertex<D> vs = mx.findVertex(s);
-			IndexVertex<D> ve = mx.findVertex(e);
+			IndexVertex<D> vs = graphFacade.findVertex(s);
+			IndexVertex<D> ve = graphFacade.findVertex(e);
 			
-			mx.addVertex(vs, true);
-			mx.addVertex(ve, true);
+			graphFacade.addVertex(vs, true);
+			graphFacade.addVertex(ve, true);
 			
 			int is = vs.index();
 			int ie = ve.index();
@@ -38,14 +38,14 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 				ve = tmp;
 			}
 			
-			mx.setWeight(vs.index(), ve.index(), weight);
+			graphFacade.setWeight(vs.index(), ve.index(), weight);
 			return new DefaultEdge<IVertex<D>> (vs, ve, weight);
 			
 		}
 		
 		public IEdge<IVertex<D>> removeEdge(D s, D e) {
-			IndexVertex<D> vs = mx.findVertex(s);
-			IndexVertex<D> ve = mx.findVertex(e);
+			IndexVertex<D> vs = graphFacade.findVertex(s);
+			IndexVertex<D> ve = graphFacade.findVertex(e);
 			
 			int is = vs.index();
 			int ie = ve.index();
@@ -56,7 +56,7 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 				ve = tmp;
 			}
 			
-			mx.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
+			graphFacade.setWeight(vs.index(), ve.index(), DoubleMatrix.INF_WEIGHT);
 			
 			return new DefaultEdge<IVertex<D>>(vs.v, ve.v, DoubleMatrix.INF_WEIGHT);
 		}
@@ -76,7 +76,7 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 				throw new VertexException("can not find vertex s : " + s);
 			}
 			
-			return mx.listWeights(vs, EdgeType.ANY_EDGE);
+			return graphFacade.listWeights(vs, EdgeType.ANY_EDGE);
 		};
 
 		@Override
@@ -120,7 +120,7 @@ class UndirectedGraph<D> extends Graph.GraphType<D> {
 				ve = tmp;
 			}
 			
-			weight = mx.getWeight(vs.index(), ve.index());
+			weight = graphFacade.getWeight(vs.index(), ve.index());
 			
 			if ( weight < 0 ) {
 				throw new EdgeException("cannot find edge between : " + s + " and " + e);
